@@ -1,0 +1,136 @@
+/* Global styles */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #1b2838;
+    color: #c6d4df;
+    cursor: default;
+}
+
+/* Header styles */
+.header {
+    background: linear-gradient(90deg, #171a21 0%, #1b2838 100%);
+    padding: 10px 0;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.gameify-logo {
+    width: 176px;
+    height: 44px;
+}
+
+/* Navigation */
+.main-nav {
+    display: flex;
+    gap: 30px;
+}
+
+.main-nav a {
+    color: #c6d4df;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.main-nav a:hover {
+    color: #fff;
+}
+
+/* Header buttons */
+.header-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.install-button {
+    background-color: #5c7e10;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.install-button:hover {
+    background-color: #729c15;
+}
+
+.login-button {
+    color: #b8b6b4;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    color: #ffffff;
+}
+
+/* Secondary Navigation */
+.secondary-nav {
+    background-color: #2a475e;
+    padding: 10px 0;
+}
+
+.secondary-nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.secondary-nav a {
+    color: #c6d4df;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.secondary-nav a:hover {
+    color: #ffffff;
+}
+
+.search-box {
+    margin-left: auto;
+    display: flex;
+}
+
+.search-box input {
+    background-color: #316282;
+    border: 1px solid #4b6b8b;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    width: 200px;
+    cursor: text;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.featured-image {
+    width: 100%;
+    border-radius: 4px;
+} 

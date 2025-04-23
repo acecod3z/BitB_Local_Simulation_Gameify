@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gameify - Your Gaming Hub</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/popup.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="images/gameify-logo.png" alt="Gameify" class="gameify-logo">
+      </div>
+      <nav class="main-nav">
+        <a href="#">Store</a>
+        <a href="#">Community</a>
+        <a href="#">About</a>
+        <a href="#">Support</a>
+      </nav>
+      <div class="header-buttons">
+        <a href="#" class="install-button">Install Gameify</a>
+        <a href="#" class="login-button" id="loginButton">login</a>
+        <select style="background: transparent; color: #b8b6b4; border: none;">
+          <option>language</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secondary Navigation -->
+  <div class="secondary-nav">
+    <div class="secondary-nav-content">
+      <a href="#">Your Store</a>
+      <a href="#">New & Noteworthy</a>
+      <a href="#">Categories</a>
+      <a href="#">Points Shop</a>
+      <a href="#">News</a>
+      <a href="#">Labs</a>
+      <div class="search-box">
+        <input type="text" placeholder="search">
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <img src="images/featured-game.jpg" alt="Featured Game" class="featured-image">
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Login Popup -->
+  <div class="popup" id="popup">
+    <div class="popup-header" id="dragBar">Gameify Login</div>
+    <div class="popup-content">
+      <div class="form">
+        <h2>Sign in</h2>
+        <label>SIGN IN WITH ACCOUNT NAME</label>
+        <input type="text" placeholder="Account name">
+        <label>PASSWORD</label>
+        <input type="password" placeholder="Password">
+        <div class="remember-me">
+          <input type="checkbox" id="remember" checked>
+          <label for="remember">Remember me</label>
+        </div>
+        <button onclick="alert('Simulated login')">Sign in</button>
+        <a href="#">Help, I can't sign in</a>
+      </div>
+      <div class="qr-section">
+        <img src="images/qr-code.png" alt="QR Code">
+        <p>Use the <a href="#">Gameify Mobile App</a> to sign in via QR code</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

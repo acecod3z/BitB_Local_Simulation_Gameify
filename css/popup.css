@@ -1,0 +1,132 @@
+/* Popup styles */
+.popup {
+    width: 600px;
+    background-color: #171a21;
+    color: white;
+    border-radius: 4px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    display: none;
+    z-index: 1000;
+}
+
+.popup-header {
+    height: 30px;
+    background-color: #20232a;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    cursor: grab;
+    user-select: none;
+}
+
+.popup-header:active {
+    cursor: grabbing;
+}
+
+.popup-content {
+    display: flex;
+    padding: 30px;
+}
+
+.form {
+    flex: 1;
+}
+
+.form h2 {
+    margin: 0 0 20px 0;
+    font-size: 24px;
+}
+
+.form label {
+    font-size: 12px;
+    color: #66c0f4;
+}
+
+.form input[type="text"],
+.form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #32353c;
+    border: none;
+    border-radius: 2px;
+    margin: 10px 0;
+    color: white;
+    cursor: text;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.remember-me input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.form button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #06BFFF 0%, #2D73FF 100%);
+    border: none;
+    border-radius: 2px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.form button:hover {
+    opacity: 0.9;
+}
+
+.form a {
+    color: #c7d5e0;
+    font-size: 12px;
+    display: block;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.form a:hover {
+    color: #ffffff;
+}
+
+.qr-section {
+    margin-left: 30px;
+    text-align: center;
+}
+
+.qr-section img {
+    width: 150px;
+    border-radius: 4px;
+}
+
+.qr-section p {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #c7d5e0;
+}
+
+.qr-section a {
+    color: #66c0f4;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    z-index: 999;
+    cursor: default;
+} 
