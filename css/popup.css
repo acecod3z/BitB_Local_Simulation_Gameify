@@ -1,9 +1,24 @@
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: -360deg; /* Keep reversed direction */
+  }
+}
+
 /* Popup styles */
 .popup {
     width: 600px;
-    background-color: #171a21;
+    /* background-color: #171a21; */ /* Keep background removed */
     color: white;
-    border-radius: 4px;
+    border-radius: 10px; /* Use 10px radius */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -11,6 +26,37 @@
     box-shadow: 0 0 20px rgba(0,0,0,0.7);
     display: none;
     z-index: 1000;
+    padding: 5px; /* Use 5px padding */
+    overflow: hidden; /* Add overflow hidden back */
+}
+
+.popup::after, .popup::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: conic-gradient(from var(--angle), #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1; /* Place behind the popup content */
+  border-radius: 10px; /* Match popup border-radius */
+  animation: 3s spin linear infinite;
+}
+
+.popup::before {
+  filter: blur(1.5rem);
+  opacity: 0.5;
+}
+
+/* Inner content wrapper to hold the background and actual content */
+.popup-inner-content {
+    background-color: #171a21; /* Apply background here */
+    width: 100%;
+    height: 100%;
+    border-radius: 5px; /* Adjusted inner radius = outer (10px) - padding (5px) */
+    box-sizing: border-box;
+    overflow: hidden; /* Clip content like header/footer to inner radius */
 }
 
 .popup-header {
@@ -18,9 +64,25 @@
     background-color: #20232a;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 10px;
     cursor: grab;
     user-select: none;
+}
+
+.popup-close-btn {
+    background: none;
+    border: none;
+    color: #c7d5e0;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+}
+
+.popup-close-btn:hover {
+    color: #ffffff;
 }
 
 .popup-header:active {
