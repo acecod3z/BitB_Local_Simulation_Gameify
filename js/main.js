@@ -974,7 +974,7 @@ if (formatButton) {
 document.addEventListener('DOMContentLoaded', () => {
     loadChatHistory();
     updateCharacterCounter();
-    updateAngerMeter(); // <<< Initial anger meter update on load
+    updateAngerMeter();
 });
 
 // ... (Rest of the JS code like theme switching etc.) ... 

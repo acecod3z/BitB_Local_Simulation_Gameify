@@ -575,94 +575,23 @@ body {
 
 /* Main Content */
 .main-content {
+<<<<<<< Updated upstream
     max-width: 100%;
     margin: 0;
     padding: 0;
+=======
+    max-width: 1200px;
+    margin: 20px auto; /* Restore default top/bottom margin */
+    padding: 0 20px;
+    /* Removed text-align: center; */
+>>>>>>> Stashed changes
 }
 
+/* Re-enable old featured-image rule if it was used */
+/*
 .featured-image {
     width: 100%;
     border-radius: 4px;
-}
-
-.featured-heading {
-  text-align: center;
-  font-size: 2rem;
-  color: var(--text-primary);
-  margin: 1rem 0;
-  font-weight: bold;
-}
-
-/* Light Theme - REMOVE OR KEEP COMMENTED IF USING VARIABLES */
-/*
-body.light-theme {
-    background-color: #ffffff;
-    color: #333333;
-}
-body.light-theme .header {
-    background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 100%);
-}
-body.light-theme .main-nav a {
-    color: #555555;
-}
-body.light-theme .main-nav a:hover {
-    color: #000000;
-}
-body.light-theme .login-button,
-body.light-theme #themeToggle,
-body.light-theme .header-buttons select {
-    color: #555555;
-}
-body.light-theme .login-button:hover,
-body.light-theme #themeToggle:hover {
-    color: #000000;
-}
-body.light-theme .secondary-nav {
-    background-color: #cccccc;
-}
-body.light-theme .secondary-nav a {
-    color: #444444;
-}
-body.light-theme .secondary-nav a:hover {
-    color: #000000;
-}
-body.light-theme .search-box input {
-    background-color: #dddddd;
-    border: 1px solid #bbbbbb;
-    color: #333333;
-}
-body.light-theme .popup {
-    background-color: #f9f9f9;
-    color: #333;
-    border: 1px solid #ccc;
-}
-body.light-theme .popup-header {
-    background-color: #e0e0e0;
-    color: #333;
-    border-bottom: 1px solid #ccc;
-}
-body.light-theme .form input[type="text"],
-body.light-theme .form input[type="password"] {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    color: #333;
-}
-body.light-theme .form button {
-    background-color: #5c7e10; 
-    color: white;
-}
-body.light-theme .form button:hover {
-    background-color: #729c15;
-}
-body.light-theme .form a,
-body.light-theme .qr-section p a {
-    color: #007bff;
-}
-body.light-theme .qr-section p {
-    color: #555;
-}
-body.light-theme .overlay {
-    background-color: rgba(200, 200, 200, 0.7);
 }
 */
 
@@ -1209,15 +1138,13 @@ body.light-theme .overlay {
     flex-direction: column;
     gap: 15px;
     min-height: 100px; /* Prevent collapsing */
-    /* Remove background color if inner-content has it */
 }
 
 /* Message Wrapper for better structure */
 .message-wrapper {
     display: flex;
     flex-direction: column;
-    /* Removed align-self potentially causing issues, handled by message divs */
-    max-width: 90%; /* Prevent wrapper from stretching full width */
+    max-width: 90%;
 }
 
 .message-wrapper.user {
@@ -1237,7 +1164,6 @@ body.light-theme .overlay {
     font-size: 14px;
     line-height: 1.4;
     position: relative; /* Needed for potential absolute children like particles */
-    z-index: 2; /* Ensure message is above particles/borders */
 }
 
 /* Align the wrapper itself, not the inner message divs */
@@ -1304,9 +1230,22 @@ body.light-theme .overlay {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1; /* Behind message text (z-index 2) */
-    overflow: visible; /* Allow particles to float outside bounds */
+    z-index: 1; /* Ensure these are above background particles */
+    overflow: visible;
 }
+
+.particle {
+    /* Keep existing .particle styles for response effects */
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--text-accent);
+    border-radius: 50%;
+    animation: float 2s ease-in-out infinite;
+    opacity: 0;
+}
+
+/* Keep existing @keyframes float */
 
 /* Adjust ASCII art positioning */
 .ascii-art {
@@ -1527,5 +1466,45 @@ body.light-theme .overlay {
     background: var(--bg-secondary); 
 } 
 /* ... rest of ::before/::after glitch keyframes ... */
+
+/* Background Particle Styling */
+.background-particle-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Don't interfere with clicks */
+    overflow: hidden; /* Keep particles contained */
+    z-index: 0; /* Behind messages */
+}
+
+.background-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background-color: var(--text-accent); /* Use accent color */
+    border-radius: 50%;
+    opacity: 0;
+    animation: drift 15s linear infinite;
+    filter: blur(1px); /* Optional: softer look */
+}
+
+@keyframes drift {
+    0% {
+        transform: translateY(100%) translateX(0px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.3;
+    }
+    90% {
+         opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-100%) translateX(calc(var(--drift-x) * 1px)) rotate(360deg);
+        opacity: 0;
+    }
+}
 
 /* ... rest of CSS ... */ 
