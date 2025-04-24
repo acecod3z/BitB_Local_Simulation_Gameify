@@ -575,9 +575,9 @@ body {
 
 /* Main Content */
 .main-content {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .featured-image {
@@ -824,7 +824,7 @@ body.light-theme .overlay {
 
 /* -- Carousel Styles -- */
 .carousel{
-    height: 80vh; 
+    height: calc(100vh - 100px); /* Adjust height to fill screen minus header */
     width: 100%; 
     overflow: hidden;
     position: relative;
@@ -834,7 +834,6 @@ body.light-theme .overlay {
     height: 100%;
     position: absolute;
     inset: 0 0 0 0;
-    z-index: 1;
 }
 .carousel .list .item img{
     width: 100%;
@@ -845,8 +844,8 @@ body.light-theme .overlay {
     position: absolute;
     top: 20%;
     left: 10%;
-    width: 50%;
-    max-width: 600px;
+    width: 80%;
+    max-width: 800px;
     padding-right: 0;
     box-sizing: border-box;
     color: var(--carousel-text);
