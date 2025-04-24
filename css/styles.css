@@ -575,16 +575,9 @@ body {
 
 /* Main Content */
 .main-content {
-<<<<<<< Updated upstream
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-=======
     max-width: 1200px;
     margin: 20px auto; /* Restore default top/bottom margin */
     padding: 0 20px;
-    /* Removed text-align: center; */
->>>>>>> Stashed changes
 }
 
 /* Re-enable old featured-image rule if it was used */
@@ -753,64 +746,134 @@ body {
 
 /* -- Carousel Styles -- */
 .carousel{
-    height: calc(100vh - 100px); /* Adjust height to fill screen minus header */
+    height: calc(100vh - 100px);
     width: 100%; 
     overflow: hidden;
     position: relative;
+    background: none; /* Removed background color completely */
+    border-radius: 20px;
+    padding: 0;
 }
 .carousel .list .item{
     width: 100%;
     height: 100%;
     position: absolute;
     inset: 0 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    will-change: opacity, transform;
+    border-radius: 20px;
+    overflow: hidden;
+}
+.carousel .list .item:first-child {
+    opacity: 1;
+    z-index: 2;
+}
+.carousel .list .item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, 
+        rgba(var(--dynamic-glow-1, 255, 255, 255), 0.3) 0%,
+        rgba(var(--dynamic-glow-2, 0, 0, 0), 0.5) 50%,
+        rgba(0, 0, 0, 0.9) 100%);
+    z-index: 1;
+    filter: blur(30px);
+    transition: all 0.5s ease;
 }
 .carousel .list .item img{
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 20px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.5s ease;
+    transform: scale(1.02); /* Slightly scale up to prevent white edges */
 }
+
+/* Update content positioning */
 .carousel .list .item .content{
     position: absolute;
-    top: 20%;
-    left: 10%;
-    width: 80%;
-    max-width: 800px;
-    padding-right: 0;
+    bottom: 10%;
+    left: 5%;
+    width: 70%;
+    max-width: 700px;
+    padding: 15px;
     box-sizing: border-box;
     color: var(--carousel-text);
-    text-shadow: 0 5px 10px #0004;
+    text-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
     display: flex; 
-    flex-direction: column; 
-    gap: 10px; 
-    z-index: 2; 
+    flex-direction: column;
+    gap: 15px;
+    z-index: 3;
+    background: none; /* Removed background color */
+    backdrop-filter: blur(8px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.carousel .list .item .author{
-    font-weight: bold;
-    letter-spacing: 10px;
+
+/* Update time bar to respect rounded corners */
+.carousel .time{
+    position: absolute;
+    z-index: 1000;
+    width: 0%;
+    height: 3px;
+    background-color: var(--time-bar);
+    left: 0;
+    top: 0;
+    transition: background-color 0.3s ease;
+    border-top-left-radius: 20px;
 }
+
+/* Content wrapper to keep text in correct order */
+.carousel .list .item .content > *:not(.buttons) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.carousel .list .item .author,
 .carousel .list .item .title,
-.carousel .list .item .topic{
-    font-size: 4em; 
+.carousel .list .item .topic,
+.carousel .list .item .des,
+.carousel .list .item .buttons {
+    order: initial;
+}
+
+.carousel .list .item .title {
+    font-size: 3em; /* Slightly reduced from 3.5em */
     font-weight: bold;
-    line-height: 1.1em; 
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    line-height: 1.1em;
+    margin: 0;
 }
-.carousel .list .item .topic{
-    font-size: 2.5em; 
+
+.carousel .list .item .topic {
+    font-size: 1.8em; /* Slightly reduced from 2em */
     color: var(--carousel-topic);
+    margin: 5px 0;
 }
+
 .carousel .list .item .des {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    font-size: 1.1em; /* Slightly reduced from 1.2em */
+    max-width: 550px; /* Reduced from 600px */
+    margin: 5px 0;
 }
-.carousel .list .item .buttons{
+
+.carousel .list .item .buttons {
     display: grid;
     grid-template-columns: repeat(2, 130px);
     grid-template-rows: 40px;
-    gap: 5px;
-    margin-top: 20px;
+    gap: 10px;
+    margin-bottom: 20px;
 }
+
 .carousel .list .item .buttons button{
     border: none;
     background-color: var(--carousel-button-bg);
@@ -819,13 +882,25 @@ body {
     font-weight: 500;
     color: var(--carousel-button-text);
     cursor: pointer; 
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+.carousel .list .item .buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 .carousel .list .item .buttons button:nth-child(2){
-    background-color: var(--carousel-button-alt-bg);
-    border: 1px solid var(--carousel-button-alt-border);
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+    border: 2px solid var(--carousel-button-alt-border);
     color: var(--carousel-button-alt-text);
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    backdrop-filter: blur(5px); /* Add slight blur effect */
+    transition: all 0.3s ease;
+}
+.carousel .list .item .buttons button:nth-child(2):hover {
+    background-color: rgba(255, 255, 255, 0.3); /* Slightly more opaque on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
 }
 /* thumbail */
 .thumbnail{
@@ -835,14 +910,18 @@ body {
 /* arrows */
 .arrows{
     position: absolute;
-    top: 80%;
-    right: 52%;
+    top: 20px;
+    right: 20px;
     z-index: 100;
-    width: 300px;
-    max-width: 30%;
+    width: auto;
+    max-width: none;
     display: flex;
     gap: 10px;
     align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
 }
 .arrows button{
     width: 40px;
@@ -854,13 +933,13 @@ body {
     font-family: monospace;
     font-size: large; 
     font-weight: bold;
-    transition: .5s;
+    transition: all 0.3s ease;
     cursor: pointer; 
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 .arrows button:hover{
     background-color: var(--arrow-hover-bg);
     color: var(--arrow-hover-text);
+    transform: scale(1.1);
 }
 
 /* animation */
@@ -915,18 +994,6 @@ body {
 .carousel.next .thumbnail .item:nth-last-child(1){
 }
 
-/* running time */
-.carousel .time{
-    position: absolute;
-    z-index: 1000;
-    width: 0%;
-    height: 3px;
-    background-color: var(--time-bar);
-    left: 0;
-    top: 0;
-    transition: background-color 0.3s ease;
-}
-
 /* prev click - JS handles this now */
 .carousel.prev .list .item:nth-child(2){
 }
@@ -958,65 +1025,43 @@ body {
 }
 
 /* Responsive adjustments */
-@media screen and (max-width: 768px) { 
+@media screen and (max-width: 768px) {
     .carousel .list .item .content{
-        left: 5%;
-        width: 80%;
-        max-width: none;
-        top: 15%;
-        gap: 5px; 
-        overflow: auto; 
-        max-height: 60%; 
+        bottom: 5%;
+        width: 90%;
+        gap: 10px;
     }
-    .carousel .list .item .content .title{
-        font-size: 2.5em; 
+    
+    .carousel .list .item .title{
+        font-size: 2.5em;
     }
-    .carousel .list .item .content .topic{
-        font-size: 1.8em; 
+    
+    .carousel .list .item .topic{
+        font-size: 1.8em;
     }
-    .carousel .list .item .content .author {
-        letter-spacing: 5px; 
-    }
-     .carousel .list .item .content .des {
-        font-size: 0.9em; 
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden; 
-    }
-    .carousel .list .item .buttons {
-        grid-template-columns: repeat(2, 100px); 
-        margin-top: 10px; 
-    }
-    .arrows {
-        right: 5%;
-        top: 50%;
-        transform: translateY(-50%);
-        width: auto;
+    
+    .carousel .list .item .buttons{
+        grid-template-columns: repeat(2, 110px);
     }
 }
 
-@media screen and (max-width: 480px) { 
+@media screen and (max-width: 480px) {
     .carousel .list .item .content{
-        overflow: auto;
-        max-height: 55%; 
+        bottom: 3%;
+        gap: 5px;
     }
-    .carousel .list .item .content .title{
-        font-size: 2em; 
+    
+    .carousel .list .item .title{
+        font-size: 2em;
     }
-    .carousel .list .item .content .topic{
-        font-size: 1.5em; 
+    
+    .carousel .list .item .topic{
+        font-size: 1.5em;
     }
-    .carousel .list .item .buttons {
-        grid-template-columns: 1fr; 
-        grid-template-rows: repeat(2, 35px);
-        width: 100px; 
-        margin-top: 5px;
-    }
-    .arrows {
-        top: 50%;
-        transform: translateY(-50%);
-        right: 2%;
+    
+    .carousel .list .item .buttons{
+        grid-template-columns: repeat(2, 100px);
+        gap: 5px;
     }
 }
 
@@ -1066,7 +1111,7 @@ body {
 }
 
 .chatbot-container::before {
-  filter: blur(1.5rem);
+  filter: none;
   opacity: 0.6;
 }
 
@@ -1483,11 +1528,10 @@ body {
     position: absolute;
     width: 3px;
     height: 3px;
-    background-color: var(--text-accent); /* Use accent color */
+    background-color: var(--text-accent);
     border-radius: 50%;
     opacity: 0;
     animation: drift 15s linear infinite;
-    filter: blur(1px); /* Optional: softer look */
 }
 
 @keyframes drift {

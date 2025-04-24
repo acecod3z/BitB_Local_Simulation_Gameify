@@ -85,166 +85,116 @@ let carouselTimeDom = carouselDom ? carouselDom.querySelector('.carousel .time')
 // Update check to remove thumbnail elements
 if (carouselDom && carouselSliderDom && carouselTimeDom && carouselNextDom && carouselPrevDom && typeof anime === 'function') {
 
-    let carouselTimeRunning = 600; 
-    let carouselTimeAutoNext = 7000; 
+    let carouselTimeRunning = 1000; // Transition duration remains 1 second
+    let carouselTimeAutoNext = 6000; // Changed from 10000 to 6000ms (6 seconds)
     let isAnimating = false; 
+    let currentCarouselIndex = 0;
+    let timeAutoNext;
+
+    function showCarouselSlider() {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        const items = document.querySelectorAll('.carousel .list .item');
+        const nextIndex = (currentCarouselIndex + 1) % items.length;
+        
+        // Reset any existing animations and styles
+        anime.remove(items);
+        anime.remove(carouselTimeDom);
+        
+        items.forEach(item => {
+            item.style.display = 'none';
+            item.style.opacity = '0';
+            item.style.zIndex = '1';
+        });
+        
+        // Set up initial states
+        items[currentCarouselIndex].style.display = 'flex';
+        items[currentCarouselIndex].style.opacity = '1';
+        items[currentCarouselIndex].style.zIndex = '2';
+        
+        items[nextIndex].style.display = 'flex';
+        items[nextIndex].style.zIndex = '3';
+        
+        // Reset and animate time bar
+        carouselTimeDom.style.width = '100%';
+        
+        // Create main animation timeline
+        const timeline = anime.timeline({
+            easing: 'easeInOutQuad',
+            duration: carouselTimeRunning
+        });
+
+        // Add slide transition animations
+        timeline
+        .add({
+            targets: items[nextIndex],
+            opacity: [0, 1],
+            duration: carouselTimeRunning / 2
+        })
+        .add({
+            targets: items[currentCarouselIndex],
+            opacity: [1, 0],
+            duration: carouselTimeRunning / 2,
+            complete: () => {
+                // Clean up all items
+                items.forEach((item, index) => {
+                    if (index !== nextIndex) {
+                        item.style.display = 'none';
+                        item.style.opacity = '0';
+                        item.style.zIndex = '1';
+                    }
+                });
+                
+                // Set final state for next slide
+                items[nextIndex].style.opacity = '1';
+                items[nextIndex].style.zIndex = '2';
+                
+                // Update current index
+                currentCarouselIndex = nextIndex;
+                isAnimating = false;
+                
+                // Start time bar animation for next interval
+                anime({
+                    targets: carouselTimeDom,
+                    width: ['100%', '0%'],
+                    duration: carouselTimeAutoNext,
+                    easing: 'linear',
+                    complete: () => {
+                        // Only auto-advance if not manually interrupted
+                        if (!isAnimating) {
+                            showCarouselSlider();
+                        }
+                    }
+                });
+            }
+        }, '-=' + (carouselTimeRunning / 2));
+    }
+
+    // Initialize first time bar animation
+    anime({
+        targets: carouselTimeDom,
+        width: ['100%', '0%'],
+        duration: carouselTimeAutoNext,
+        easing: 'linear',
+        complete: () => {
+            if (!isAnimating) {
+                showCarouselSlider();
+            }
+        }
+    });
 
     carouselNextDom.onclick = function() {
         if (isAnimating) return;
-        showCarouselSlider('next');
+        anime.remove(carouselTimeDom); // Remove existing time bar animation
+        showCarouselSlider();
     }
 
     carouselPrevDom.onclick = function() {
         if (isAnimating) return;
-        showCarouselSlider('prev');
+        anime.remove(carouselTimeDom); // Remove existing time bar animation
+        showCarouselSlider();
     }
-
-    let carouselRunNextAuto = setTimeout(() => {
-        if (!isAnimating) carouselNextDom.click(); 
-    }, carouselTimeAutoNext);
-
-    function showCarouselSlider(type) {
-        isAnimating = true;
-        let carouselSliderItemsDom = carouselSliderDom.querySelectorAll('.carousel .list .item');
-        clearTimeout(carouselRunNextAuto);
-
-        const animationDuration = carouselTimeRunning; // Use a consistent duration
-
-        let currentActiveItem, currentActiveImg, nextItem, nextImg, itemToMove;
-
-        // --- Identify elements and set initial states --- 
-        if (type === 'next') {
-            currentActiveItem = carouselSliderItemsDom[0];
-            currentActiveImg = currentActiveItem?.querySelector('img');
-            nextItem = carouselSliderItemsDom[1];
-            nextImg = nextItem?.querySelector('img');
-            itemToMove = currentActiveItem; // Will be moved later
-
-            // Initial setup for incoming item
-            if (nextItem) nextItem.style.zIndex = 3; // Ensure incoming is top
-            if (nextImg) nextImg.style.opacity = '0'; 
-
-            // Setup for outgoing item
-            if (currentActiveItem) currentActiveItem.style.zIndex = 2;
-            if (currentActiveImg) currentActiveImg.style.opacity = '1'; // Ensure starts visible
-
-        } else { // type === 'prev'
-            itemToMove = carouselSliderItemsDom[carouselSliderItemsDom.length - 1]; // Item to prepend
-            currentActiveItem = carouselSliderItemsDom[0]; // Item currently visible (will fade out)
-            currentActiveImg = currentActiveItem?.querySelector('img');
-            nextItem = itemToMove; // The item that will become active (already prepended)
-            nextImg = nextItem?.querySelector('img');
-
-            // Setup for incoming item (after prepend)
-            if (nextItem) nextItem.style.zIndex = 3; // Ensure incoming is top
-            if (nextImg) {
-                nextImg.style.opacity = '0'; 
-                nextImg.style.transform = 'scale(0.9)'; 
-            }
-            
-            // Setup for outgoing item
-            if (currentActiveItem) currentActiveItem.style.zIndex = 2;
-            if (currentActiveImg) currentActiveImg.style.opacity = '1'; // Ensure starts visible
-
-            // Prepend immediately
-            carouselSliderDom.prepend(itemToMove);
-        }
-
-        // --- Animation Phase 1: Hide Old --- 
-        let hidePromise = Promise.resolve(); 
-        if (currentActiveImg) {
-             hidePromise = anime({
-                targets: currentActiveImg,
-                opacity: 0,
-                duration: animationDuration / 2.5, // Faster fade out
-                easing: 'linear'
-            }).finished;
-        }
-
-        // --- Animation Phase 2: Show New (Starts after Hide completes) --- 
-        hidePromise.then(() => {
-            let showPromises = [];
-            if (nextImg) {
-                 if (type === 'next') {
-                     showPromises.push(anime({
-                         targets: nextImg,
-                         opacity: [0, 1],
-                         duration: animationDuration / 1.5, // Fade in over remaining time
-                         easing: 'easeInQuad'
-                     }).finished);
-                 } else { // type === 'prev'
-                     showPromises.push(anime({
-                         targets: nextImg,
-                         opacity: [0, 1],
-                         scale: [0.9, 1],
-                         duration: animationDuration, // Allow full duration for scale + fade
-                         easing: 'easeOutQuad'
-                     }).finished);
-                 }
-            }
-            return Promise.all(showPromises);
-
-        // --- DOM Manipulation & Cleanup after ALL animations --- 
-        }).then(() => {
-             // Reset Z-index for all items first
-            let allItems = carouselSliderDom.querySelectorAll('.carousel .list .item');
-            allItems.forEach(item => item.style.zIndex = '');
-
-             if (type === 'next') {
-                // Move the original first item to the end
-                if (itemToMove) carouselSliderDom.appendChild(itemToMove);
-             }
-
-             // Reset styles for the items involved in the transition
-             // Ensure the new active item (now first) has clean styles
-             let finalActiveItem = carouselSliderDom.querySelector('.carousel .list .item');
-             if (finalActiveItem) {
-                 let finalActiveImg = finalActiveItem.querySelector('img');
-                 if (finalActiveImg) {
-                    finalActiveImg.style.opacity = '';
-                    finalActiveImg.style.transform = '';
-                 }
-             }
-             // Ensure the item that moved or faded out also has clean styles
-              if (itemToMove && type === 'next') { // Reset the one moved to the end
-                 let imgToReset = itemToMove.querySelector('img');
-                 if (imgToReset) {
-                     imgToReset.style.opacity = '';
-                     imgToReset.style.transform = '';
-                 }
-             } else if (currentActiveItem && type === 'prev') { // Reset the one faded out
-                 let imgToReset = currentActiveItem.querySelector('img');
-                 if (imgToReset) {
-                     imgToReset.style.opacity = '';
-                     imgToReset.style.transform = '';
-                 }
-             }
-
-            // Restart auto timer
-            carouselRunNextAuto = setTimeout(() => {
-                 if (!isAnimating) carouselNextDom.click();
-            }, carouselTimeAutoNext);
-
-             isAnimating = false; 
-         }).catch(error => {
-            console.error("Animation failed:", error);
-             // Reset z-index even on error
-            let allItems = carouselSliderDom.querySelectorAll('.carousel .list .item');
-            allItems.forEach(item => item.style.zIndex = '');
-            isAnimating = false; 
-         });
-
-        // --- Start Time Bar Animation --- (Run concurrently)
-        anime.remove(carouselTimeDom);
-        carouselTimeDom.style.width = '100%'; 
-        anime({
-            targets: carouselTimeDom,
-            width: ['100%', '0%'],
-            duration: carouselTimeAutoNext,
-            easing: 'linear'
-        });
-    }
-
 } else {
     console.warn("Carousel elements (slider, time, next, prev) not found or anime.js not loaded, skipping carousel initialization.");
 }
@@ -975,6 +925,74 @@ document.addEventListener('DOMContentLoaded', () => {
     loadChatHistory();
     updateCharacterCounter();
     updateAngerMeter();
+});
+
+// Add this function to update the glow colors
+function updateImageGlow(img) {
+    // Create a canvas to analyze the image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    
+    // Draw the image onto the canvas
+    ctx.drawImage(img, 0, 0);
+    
+    // Get the pixel data from different regions of the image
+    const topData = ctx.getImageData(0, 0, canvas.width, canvas.height / 2);
+    const bottomData = ctx.getImageData(0, canvas.height / 2, canvas.width, canvas.height / 2);
+    
+    // Calculate average colors
+    let topColor = [0, 0, 0];
+    let bottomColor = [0, 0, 0];
+    
+    // Process top half
+    for(let i = 0; i < topData.data.length; i += 4) {
+        topColor[0] += topData.data[i];
+        topColor[1] += topData.data[i + 1];
+        topColor[2] += topData.data[i + 2];
+    }
+    
+    // Process bottom half
+    for(let i = 0; i < bottomData.data.length; i += 4) {
+        bottomColor[0] += bottomData.data[i];
+        bottomColor[1] += bottomData.data[i + 1];
+        bottomColor[2] += bottomData.data[i + 2];
+    }
+    
+    // Average the colors
+    const pixelCount = (topData.data.length / 4);
+    topColor = topColor.map(c => Math.round(c / pixelCount));
+    bottomColor = bottomColor.map(c => Math.round(c / pixelCount));
+    
+    // Update the CSS variables
+    img.parentElement.style.setProperty('--dynamic-glow-1', `${topColor[0]}, ${topColor[1]}, ${topColor[2]}`);
+    img.parentElement.style.setProperty('--dynamic-glow-2', `${bottomColor[0]}, ${bottomColor[1]}, ${bottomColor[2]}`);
+}
+
+// Add event listeners for carousel images
+document.addEventListener('DOMContentLoaded', function() {
+    const carouselImages = document.querySelectorAll('.carousel .list .item img');
+    carouselImages.forEach(img => {
+        if(img.complete) {
+            updateImageGlow(img);
+        } else {
+            img.addEventListener('load', () => updateImageGlow(img));
+        }
+    });
+    
+    // Update glow when carousel changes
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+                updateImageGlow(mutation.target);
+            }
+        });
+    });
+    
+    carouselImages.forEach(img => {
+        observer.observe(img, { attributes: true });
+    });
 });
 
 // ... (Rest of the JS code like theme switching etc.) ... 
