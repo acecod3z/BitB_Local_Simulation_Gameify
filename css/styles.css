@@ -1102,152 +1102,431 @@ body.light-theme .overlay {
 
 /* --- Chatbot Styles --- */
 .chatbot-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 300px;
-  max-height: 400px;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  display: none; /* Hidden by default */
-  flex-direction: column;
-  z-index: 1001; /* Above carousel controls */
-  overflow: hidden;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 400px;
+    max-height: 600px; /* Max height limit */
+    height: 600px; /* Set an explicit height, max-height will still cap it if window is smaller */
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: none; /* JS will change to flex */
+    flex-direction: column; /* <<< Explicitly set flex direction */
+    z-index: 1001;
+    overflow: hidden; /* Keep overflow hidden on outer container */
+    padding: 5px;
+    /* Base transform for animation */
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Add transition back */
+}
+
+.chatbot-container::after,
+.chatbot-container::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: conic-gradient(from var(--angle), #ff3333, #66c0f4, #00ff99, #ce87fa, #ff3333);
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  border-radius: inherit;
+  animation: 3s spin linear infinite;
+}
+
+.chatbot-container::before {
+  filter: blur(1.5rem);
+  opacity: 0.6;
+}
+
+.chatbot-inner-content {
+    background-color: var(--bg-secondary);
+    width: 100%;
+    height: 100%; /* <<< CRITICAL: Ensure inner respects container height */
+    border-radius: 7px;
+    box-sizing: border-box;
+    /* overflow: hidden; Removed from inner, let messages handle scroll */
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease;
+    position: relative; /* Ensure it contains absolutely positioned elements */
 }
 
 .chatbot-container.visible {
-  display: flex;
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .chatbot-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  font-weight: bold;
-  border-bottom: 1px solid var(--border-color);
-  cursor: default;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 1px solid var(--border-color);
+    user-select: none;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    flex-shrink: 0; /* Header should not shrink */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-.chatbot-header > div { /* Style the button wrapper */
+.chatbot-controls {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
 }
 
-.chatbot-clear-btn, /* Apply similar styles */
+.chatbot-control-btn,
+.chatbot-clear-btn,
 .chatbot-close-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 18px; /* Adjusted size */
-  font-weight: bold;
-  cursor: pointer;
-  padding: 0 5px;
-  line-height: 1; /* Ensure consistent alignment */
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 3px;
+    line-height: 1;
+    transition: color 0.2s ease;
 }
 
-.chatbot-clear-btn:hover, /* Apply similar hover styles */
+.chatbot-control-btn:hover,
+.chatbot-clear-btn:hover,
 .chatbot-close-btn:hover {
-  color: var(--text-light);
+    color: var(--text-light);
 }
 
 .chatbot-messages {
-  flex-grow: 1;
-  padding: 10px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    flex-grow: 1; /* Grow to fill available space */
+    padding: 15px;
+    overflow-y: auto; /* <<< CRITICAL: Enable vertical scrolling */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 100px; /* Prevent collapsing */
+    /* Remove background color if inner-content has it */
+}
+
+/* Message Wrapper for better structure */
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* Removed align-self potentially causing issues, handled by message divs */
+    max-width: 90%; /* Prevent wrapper from stretching full width */
+}
+
+.message-wrapper.user {
+    align-self: flex-end;
+}
+
+.message-wrapper.ultron {
+    align-self: flex-start;
 }
 
 .ultron-message,
 .user-message {
-  padding: 8px 12px;
-  border-radius: 10px;
-  max-width: 85%;
-  word-wrap: break-word;
-  font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 100%; /* Allow message bubble to take full width of wrapper */
+    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative; /* Needed for potential absolute children like particles */
+    z-index: 2; /* Ensure message is above particles/borders */
 }
 
+/* Align the wrapper itself, not the inner message divs */
+/* Removed align-self from .ultron-message and .user-message */
+
 .ultron-message {
-  background-color: var(--bg-input);
-  color: var(--text-primary);
-  align-self: flex-start;
-  border-bottom-left-radius: 2px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    /* align-self: flex-start; <-- Removed */
+    border-bottom-left-radius: 4px;
+    /* Keep existing transitions and animations */
+    /* position: relative; <-- Moved to common style */
+    animation: messageAppear 0.3s ease;
 }
 
 .user-message {
-  background-color: var(--text-accent);
-  color: var(--bg-primary); /* Ensure contrast */
-  align-self: flex-end;
-  border-bottom-right-radius: 2px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-/* Specific adjustment for light theme user message */
-body[data-theme='light'] .user-message {
-    color: var(--text-light);
-}
-body[data-theme='ultron'] .user-message {
-    color: var(--text-light); /* White text on red bg */
+    background-color: var(--text-accent);
+    color: var(--bg-primary);
+    /* align-self: flex-end; <-- Removed */
+    border-bottom-right-radius: 4px;
+    /* Keep existing transitions */
 }
 
+/* Message Timestamp and Actions */
+.message-timestamp {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    margin-top: 4px; /* Reduced top margin */
+    margin-bottom: 2px; /* Reduced bottom margin */
+    padding: 0 5px; /* Add slight horizontal padding */
+}
 
+.message-wrapper.user .message-timestamp {
+    text-align: right;
+}
+
+.message-wrapper.ultron .message-timestamp {
+    text-align: left;
+}
+
+.message-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    font-size: 0.85em;
+    padding: 0 5px; /* Match timestamp padding */
+    margin-top: 0;
+}
+
+.message-wrapper.user .message-actions {
+    justify-content: flex-end;
+}
+
+.message-wrapper.ultron .message-actions {
+    justify-content: flex-start;
+}
+
+/* Position particles relative to wrapper, not message bubble */
+.particle-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1; /* Behind message text (z-index 2) */
+    overflow: visible; /* Allow particles to float outside bounds */
+}
+
+/* Adjust ASCII art positioning */
+.ascii-art {
+    /* ... existing styles ... */
+    margin-bottom: 5px; /* Space below ASCII */
+    align-self: flex-start; /* Align with ultron message */
+    z-index: 2; /* Ensure it's above particles */
+}
+
+/* ... rest of existing styles ... */
+
+/* Chatbot Input Area */
 .chatbot-input-area {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid var(--border-color);
-  background-color: var(--bg-secondary); /* Match container */
-  transition: border-color 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 10px 12px; /* Reduced vertical padding slightly */
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-tertiary); /* Slightly different bg */
+    gap: 8px;
+    position: relative;
+    flex-shrink: 0; /* Input area should not shrink */
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.input-controls { /* Wrapper for mic/format buttons */
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Adjust gap */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.input-control-btn { /* Style for mic/format buttons */
+    background: var(--bg-input); /* Give buttons a background */
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 16px; /* Slightly smaller icons */
+    cursor: pointer;
+    padding: 0; /* Remove padding, use width/height */
+    width: 32px;  /* Make circular */
+    height: 32px; /* Make circular */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.input-control-btn:hover {
+    color: var(--text-light);
+    background-color: var(--bg-secondary);
+    border-color: var(--text-accent);
 }
 
 #chatbotInput {
-  flex-grow: 1;
-  padding: 8px 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--bg-input);
-  color: var(--text-light);
-  margin-right: 8px;
-  font-size: 14px;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    flex-grow: 1;
+    padding: 10px 15px; /* More horizontal padding */
+    padding-right: 50px; /* Ensure space for counter */
+    border: 1px solid var(--border-color);
+    border-radius: 18px; /* Slightly less rounded */
+    background-color: var(--bg-input);
+    color: var(--text-light);
+    font-size: 14px;
+    line-height: 1.4; /* Improve readability */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.2s ease;
+    height: 38px; /* Explicit height */
+    box-sizing: border-box; /* Include padding/border in height */
 }
 #chatbotInput:focus {
-  outline: none;
-  border-color: var(--text-accent);
+    outline: none;
+    border-color: var(--text-accent);
+    background-color: var(--bg-secondary); /* Darken on focus */
+    box-shadow: 0 0 0 2px rgba(102, 192, 244, 0.3);
+}
+
+.character-counter {
+    position: absolute;
+    right: 65px; /* Adjusted position based on new send btn size */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    background-color: var(--bg-input); /* Match input bg */
+    padding: 0 5px; /* Add some padding */
+    border-radius: 4px;
+    pointer-events: none;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+#chatbotInput:focus + .character-counter {
+    background-color: var(--bg-secondary); /* Match input focus bg */
 }
 
 #sendChatbotButton {
-  padding: 8px 15px;
-  background-color: var(--text-accent);
-  color: var(--bg-primary); /* Ensure contrast */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--text-accent);
+    color: var(--bg-secondary); /* Darker icon for contrast */
+    border: none;
+    border-radius: 50%;
+    width: 34px; /* Slightly smaller */
+    height: 34px; /* Slightly smaller */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px; /* Adjust icon size */
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+#sendChatbotButton i {
+   line-height: 1; /* Better icon alignment */
 }
 #sendChatbotButton:hover {
-  opacity: 0.9;
+    background-color: var(--accent-secondary); /* Use theme hover color */
+    opacity: 1;
 }
-/* Specific adjustment for light theme send button */
-body[data-theme='light'] #sendChatbotButton {
-    color: var(--text-light);
-}
-body[data-theme='ultron'] #sendChatbotButton {
-    color: var(--text-light); /* White text on red bg */
-}
-
-
-#openChatbotButton:hover {
-    color: var(--text-light);
+#sendChatbotButton:disabled {
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
-/* ... (rest of CSS) ... */ 
+.chatbot-mode-selector {
+    /* ... existing styles ... */
+    flex-shrink: 0; /* Selector should not shrink */
+}
+
+/* ... rest of existing styles ... */
+
+/* Anger Bar Styling */
+.anger-bar-container {
+    width: calc(100% - 30px); /* Full width minus padding */
+    height: 8px;
+    background-color: var(--bg-input);
+    border-radius: 4px;
+    margin: 5px 15px 10px 15px; /* Top L/R Bottom */
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.anger-bar-fill {
+    height: 100%;
+    width: 0%; /* Start empty */
+    background: linear-gradient(90deg, #00ff99, #ffff00, #ff3333); /* Green -> Yellow -> Red */
+    background-size: 100% 100%; /* Use gradient for color change */
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+    /* No transition needed for background as gradient handles it */
+}
+
+/* Max Anger Overlay Styling */
+.max-anger-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #ff3333; /* Ultron Red */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    font-weight: bold;
+    text-align: center;
+    z-index: 100; /* Above messages, below header? */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-in-out;
+    border-radius: 7px; /* Match inner content */
+}
+
+.max-anger-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Container Glitch Effect (More Intense) */
+.container-glitch {
+    animation: container-glitch-anim 0.4s infinite linear alternate;
+}
+
+@keyframes container-glitch-anim {
+    0% {
+        transform: translate(0, 0) skew(0deg);
+        filter: blur(0px);
+    }
+    25% {
+        transform: translate(3px, -2px) skew(-1deg);
+    }
+    50% {
+        transform: translate(-2px, 1px) skew(0.5deg);
+        filter: blur(1px);
+    }
+    75% {
+        transform: translate(1px, 3px) skew(1deg);
+    }
+    100% {
+        transform: translate(-3px, -1px) skew(-0.5deg);
+        filter: blur(0px);
+    }
+}
+
+/* Ensure message glitch effect still works */
+.glitch-effect { 
+    /* Keep existing message glitch effect styles */
+    position: relative; 
+    animation: glitch 0.3s linear infinite; 
+}
+.glitch-effect::before, .glitch-effect::after { 
+    /* Keep existing message ::before/::after styles */
+    content: attr(data-text); 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: var(--bg-secondary); 
+} 
+/* ... rest of ::before/::after glitch keyframes ... */
+
+/* ... rest of CSS ... */ 

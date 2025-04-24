@@ -80,4 +80,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📧 Contact
 
-For educational inquiries or security research collaboration, please contact [your-email@example.com] 
+For educational inquiries or security research collaboration, please contact:
+- `arpitsharma2103@gmail.com`
+- `abhinavtag0011@gmail.com` 

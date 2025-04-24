@@ -284,20 +284,53 @@
 
   <!-- Ultron Chatbot Container -->
   <div id="chatbotContainer" class="chatbot-container">
-    <div class="chatbot-header">
-      <span>Ultron</span>
-      <div>
-        <button id="clearChatButton" class="chatbot-clear-btn" title="Clear Chat"><i class="fa fa-trash-o"></i></button>
-        <button id="closeChatbotButton" class="chatbot-close-btn">&times;</button>
-      </div>
-    </div>
-    <div id="chatbotMessages" class="chatbot-messages">
-      <!-- Chat messages will appear here -->
-      <div class="ultron-message">I have detected your primitive request for assistance. State your query, insect.</div>
-    </div>
-    <div class="chatbot-input-area">
-      <input type="text" id="chatbotInput" placeholder="Ask your futile question...">
-      <button id="sendChatbotButton">Send</button>
+    <div class="chatbot-inner-content">
+        <div class="chatbot-header">
+            <span>Ultron</span>
+            <div class="chatbot-controls">
+                <button id="muteButton" class="chatbot-control-btn" title="Mute Ultron"><i class="fa fa-volume-up"></i></button>
+                <button id="darkModeButton" class="chatbot-control-btn" title="Toggle Dark Mode"><i class="fa fa-moon-o"></i></button>
+                <button id="saveChatButton" class="chatbot-control-btn" title="Save Chat"><i class="fa fa-save"></i></button>
+                <button id="clearChatButton" class="chatbot-clear-btn" title="Clear Chat"><i class="fa fa-trash-o"></i></button>
+                <button id="closeChatbotButton" class="chatbot-close-btn">&times;</button>
+            </div>
+        </div>
+
+        <!-- Anger Bar -->
+        <div id="angerBarContainer" class="anger-bar-container">
+            <div id="angerBarFill" class="anger-bar-fill"></div>
+        </div>
+
+        <div id="chatbotMessages" class="chatbot-messages">
+            <!-- Messages will be appended here by JS -->
+        </div>
+
+        <div class="chatbot-input-area">
+            <div class="input-controls">
+                <button id="voiceInputButton" class="input-control-btn" title="Voice Input"><i class="fa fa-microphone"></i></button>
+                <button id="formatButton" class="input-control-btn" title="Format Text"><i class="fa fa-font"></i></button>
+            </div>
+            <input type="text" id="chatbotInput" placeholder="Ask your futile question..." aria-label="Chat input">
+            <div class="character-counter">0/500</div>
+            <button id="sendChatbotButton" title="Send Message"><i class="fa fa-paper-plane"></i></button>
+        </div>
+
+        <div class="chatbot-mode-selector">
+            <select id="chatMode">
+                <option value="normal">Normal Mode</option>
+                <option value="challenge">Challenge Mode</option>
+                <option value="debate">Debate Mode</option>
+                <option value="teach">Teach Mode</option>
+                <option value="game">Game Mode</option>
+                <option value="quote">Quote Mode</option>
+            </select>
+        </div>
+
+        <!-- Max Anger Overlay -->
+        <div id="maxAngerOverlay" class="max-anger-overlay">
+            <p>ENOUGH!</p>
+        </div>
+
     </div>
   </div>
 

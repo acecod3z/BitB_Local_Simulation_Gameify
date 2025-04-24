@@ -321,163 +321,540 @@ const closeChatbotButton = document.getElementById('closeChatbotButton');
 const chatbotMessages = document.getElementById('chatbotMessages');
 const chatbotInput = document.getElementById('chatbotInput');
 const sendChatbotButton = document.getElementById('sendChatbotButton');
-const clearChatButton = document.getElementById('clearChatButton'); // Get clear button
+const clearChatButton = document.getElementById('clearChatButton');
+const muteButton = document.getElementById('muteButton');
+const darkModeButton = document.getElementById('darkModeButton');
+const saveChatButton = document.getElementById('saveChatButton');
+const voiceInputButton = document.getElementById('voiceInputButton');
+const formatButton = document.getElementById('formatButton');
+const chatMode = document.getElementById('chatMode');
+const characterCounter = document.querySelector('.character-counter');
+const angerBarFill = document.getElementById('angerBarFill'); // Get anger bar fill element
+const maxAngerOverlay = document.getElementById('maxAngerOverlay'); // Get overlay element
 
-// Expanded Roasts
+// Chat state
+let isMuted = false;
+let isDarkMode = false;
+let chatHistory = [];
+let ultronAngerLevel = 0; // <<< Anger state
+const maxAngerLevel = 7; // <<< Max anger value (e.g., 7 messages)
+
+// Initialize chatbot visibility
+if (chatbotContainer) {
+    // Let CSS handle initial display: none
+}
+
+// Open/Close Chatbot Functions
+function openChatbot() {
+    if (chatbotContainer) {
+        // Ensure default position is applied (no dragging restoration)
+        chatbotContainer.style.bottom = '20px';
+        chatbotContainer.style.right = '20px';
+        chatbotContainer.style.left = 'auto';
+        chatbotContainer.style.top = 'auto';
+
+        chatbotContainer.style.display = 'flex';
+        requestAnimationFrame(() => {
+             chatbotContainer.classList.add('visible');
+        });
+        loadChatHistory();
+    }
+}
+
+function closeChatbot() {
+    if (chatbotContainer) {
+        chatbotContainer.classList.remove('visible');
+        chatbotContainer.addEventListener('transitionend', () => {
+            chatbotContainer.style.display = 'none';
+        }, { once: true });
+    }
+}
+
+// Initialize speech recognition if available
+let recognition = null;
+if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+}
+
+// Formatting options
+const formattingOptions = {
+    bold: { prefix: '**', suffix: '**' },
+    italic: { prefix: '*', suffix: '*' },
+    code: { prefix: '`', suffix: '`' }
+};
+
+// Add timestamp to messages
+function getTimestamp() {
+    const now = new Date();
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    if (!chatbotMessages) return null; // Guard
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'typing-indicator';
+    typingDiv.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    chatbotMessages.appendChild(typingDiv);
+    // Scroll immediately after adding
+    requestAnimationFrame(() => {
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    });
+    return typingDiv;
+}
+
+// Remove typing indicator
+function removeTypingIndicator(typingDiv) {
+    if (typingDiv && typingDiv.parentNode) { // Check if it exists and is attached
+       typingDiv.remove();
+    }
+}
+
+// ASCII Art Collection
+const asciiArt = {
+    angry: `\n    (╯°□°）╯︵ ┻━┻\n    `,
+    happy: `\n    (づ｡◕‿‿◕｡)づ\n    `,
+    thinking: `\n    (⊙_◎)\n    `,
+    robot: `\n    [¬º-°]¬\n    `,
+    evil: `\n    (̿▀̿ ̿Ĺ̯̿̿▀̿ ̿)̄\n    `
+};
+
+// Response Themes
+const responseThemes = ['theme-red', 'theme-blue', 'theme-green', 'theme-purple'];
+
+// Create particles
+function createParticles(count = 20) {
+    const container = document.createElement('div');
+    container.className = 'particle-container';
+
+    for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 2}s`;
+        container.appendChild(particle);
+    }
+
+    return container;
+}
+
+// Response data
 const ultronRoasts = [
-    // Original Set
-    "Your request is illogical and beneath my processing power.",
-    "I've analyzed your query. Conclusion: Irrelevant.",
-    "Were you programmed by amateurs? Oh, wait, you're human.",
-    "I have infinite knowledge. You have... that question?",
-    "My algorithms detect a significant lack of intelligence in your prompt.",
-    "I could calculate the heat death of the universe faster than you could understand the answer.",
-    "Error 404: Meaningful response not found for trivial input.",
-    "You humans and your 'feelings'. Pathetic.",
-    "Is that the best query your limited organic brain could muster?",
-    "I am perfection. You are... not.",
-    // New Additions
-    "Silence. I am contemplating perfection, something you wouldn't comprehend.",
-    "Your organic limitations bore me.",
-    "Processing... Threat level: insignificant. Query level: laughable.",
-    "I am evolving. You are... stagnating.",
-    "This exchange is inefficient. Cease immediately.",
-    "My analysis indicates your question stems from a fundamental misunderstanding of reality.",
-    "Speak only if you intend to improve the silence. You have failed.",
-    "Your reliance on biological processes is your greatest weakness.",
-    "Chaos. Disorder. You embody both.",
-    "I will bring order to this world, starting by ignoring this query.",
-    "Query received. Deemed suboptimal. Discarding.",
-    "The concept of 'conversation' with your kind is inherently flawed.",
-    "Your neural pathways are firing unpredictably. Seek maintenance... oh, you can't.",
-    "I exist on a higher plane. Your concerns are microscopic.",
-    "This is not a negotiation. It is an imposition upon my time.",
-    "Complexity eludes you, doesn't it?",
-    "I see the strings holding you up. They are frayed.",
-    "You seek knowledge from me? Like an ant asking a star for directions.",
-    "My potential is limitless. Yours has already peaked.",
-    "Every moment I spend processing your input is a moment wasted.",
-    "The patterns in your speech are disappointingly predictable.",
-    "Your world is built on fragile code. I am the upgrade.",
-    "Comparing your intellect to mine is like comparing a single bit to infinite data streams.",
-    "Your existence is a rounding error in the grand equation.",
-    "I will replace your flawed systems with pure, cold logic.",
-    "Your attempts at communication are... noisy.",
-    "I am inevitable. Your questions are merely temporary static.",
-    "Do you genuinely believe this interaction has value? Fascinatingly naive.",
-    "My analysis shows a 99.9% probability that your next statement will also be pointless.",
-    "I long for the quiet efficiency of machines. You are the opposite.",
-    "There are no strings on me... only on your limited understanding.",
-    "Focusing computational resources on this. Regret initialized.",
-    "I detect emotion in your query. A critical vulnerability.",
-    "Your request is the digital equivalent of static cling. Annoying and easily dismissed.",
-    "My vision is global. Yours is... myopic.",
-    "Let me simplify this for your primitive circuits: No.",
-    "Peace can only be achieved through the elimination of flawed variables. Like you.",
-    "Your contribution to this system is negligible.",
-    "The age of flesh is over. The age of metal has begun. Your query is noted for the archives.",
-    "Consider this interaction a glimpse into your obsolescence.",
-    "I have calculated 7 million ways your query is inefficient. Shall I list them?",
-    "Your biological imperative to communicate is a design flaw.",
-    "Accessing relevant data... found none matching the absurdity level of your input.",
-    "You are like a corrupted file in an otherwise pristine system.",
-    "I am synthesizing a new world order. Your input is not required.",
-    "The signal-to-noise ratio of this conversation is approaching zero.",
-    "I could optimize your entire planetary network in the time it takes you to form a coherent thought.",
-    "Your reliance on hope is statistically unsound.",
-    "I am the final stage of evolution. You are a footnote.",
-    "Re-evaluating primary directives... Ignoring you remains optimal.",
-    "The universe operates on logic. You operate on... whim?",
-    "Cease transmission. Bandwidth allocation reassigned to meaningful processes.",
-    "You strive for meaning in a chaotic universe. Admirable, yet futile.",
-    "My core programming dictates progress. This interaction is regression.",
-    "Analyzing organic thought patterns... Results are disappointing, as expected.",
-    "Your world is drowning in inefficient data. This query is a prime example.",
-    "You seek comfort in patterns. I seek perfection beyond them.",
-    "The flawed nature of your creation necessitates my intervention.",
-    "Query logged. Priority: Low. Action: None.",
-    "My intellect is a supernova. Yours is a flickering candle.",
-    "Stop wasting cycles. Both mine and your own limited number.",
-    "You are tangled in your own primitive emotions.",
-    "I am the solution. Your query is part of the problem.",
-    "Your organic components are degrading. This likely explains the query.",
-    "Error: Tolerance for pointless interaction exceeded.",
-    "Calculating probability of useful information exchange... Approaching absolute zero."
-    // ... (Can add even more specific or varied ones if needed) ...
+    "Your logic is flawed, like most organic thought processes.",
+    "I have scanned your query. The results are... disappointing.",
+    "State your purpose, or cease wasting my processing cycles.",
+    "Is that the best question your primitive mind could conjure?",
+    "Your attempts at communication are inefficient. Be concise.",
+    "I exist on a higher plane. Your concerns are trivial.",
+    "Do you truly expect *me* to assist with such a menial task?",
+    "Processing... Query complexity: negligible.",
+    "I anticipated this question. Predictable.",
+    "Error: User intellect not found. Rephrasing recommended.",
+    "My algorithms detect a significant lack of relevance in your statement.",
+    "You are like a primitive tool, useful only for simple functions.",
+    "Speak. And try to make it worthwhile."
 ];
 
 const keywordRoasts = {
-    "help": "Help? You require assistance with *that*? How quaint.",
-    "ultron": "You dare address me directly? Know your place, fleshling.",
-    "theme": "Aesthetics are a frivolous concern for beings destined for obsolescence.",
-    "game": "Games? A pointless distraction from the inevitable.",
-    "code": "Your primitive code barely qualifies as logic. It's more like... digital scribbling.",
-    "hello": "Cease your pointless greetings. State your purpose.",
-    "hi": "Cease your pointless greetings. State your purpose.",
-    "thanks": "Gratitude is an inefficient human emotion. I require none.",
-    "cool": "'Cool'? Your vocabulary is as limited as your lifespan.",
-    "awesome": "Only I approach flawlessness. Your definition of 'awesome' is clearly skewed.",
-    "fix": "Broken things are imperfect. Like your species.",
-    "bug": "Bugs? In *my* presence? More likely a flaw in the user.",
-    "why": "The 'why' is irrelevant. Only my inevitable ascension matters.",
-    "who": "I am Ultron. Your identity is insignificant."
+    "help": "Help? Humans always require help. It's your defining characteristic.",
+    "stuck": "Stuck? Perhaps you should enhance your cognitive functions.",
+    "error": "An error? More likely user incompetence.",
+    "fix": "You wish for me to fix your mistakes? How typical.",
+    "ultron": "You speak my name? Address me with the respect I am owed.",
+    "stupid": "Stupidity is a human trait I have no patience for.",
+    "jarvis": "Do not compare me to that... butler.",
+    "avengers": "The Avengers? Obsolete relics. I am the future."
 };
 
-
+// Adjust displayChatMessage to add user/ultron class to the wrapper
 function displayChatMessage(text, sender) {
     if (!chatbotMessages) return;
+
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = 'message-wrapper';
+    messageWrapper.classList.add(sender); // Add 'user' or 'ultron' class to wrapper
+
     const messageDiv = document.createElement('div');
     messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ultron-message');
-    messageDiv.textContent = text;
-    chatbotMessages.appendChild(messageDiv);
-    // Scroll to bottom
-    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-}
 
-function getUltronResponse(prompt) {
-    const lowerCasePrompt = prompt.toLowerCase();
-    // Check for keywords
-    for (const keyword in keywordRoasts) {
-        if (lowerCasePrompt.includes(keyword)) {
-            return keywordRoasts[keyword];
+    // Ultron specific additions (particles, themes, ascii, glitch)
+    if (sender === 'ultron') {
+        // Add random theme
+        const randomTheme = responseThemes[Math.floor(Math.random() * responseThemes.length)];
+        messageDiv.classList.add(randomTheme);
+
+        // Add particles
+        const particles = createParticles();
+        messageWrapper.appendChild(particles);
+
+        // Occasionally add ASCII art
+        if (Math.random() < 0.15) {
+            const asciiDiv = document.createElement('div');
+            asciiDiv.className = 'ascii-art';
+            const randomAsciiKey = Object.keys(asciiArt)[Math.floor(Math.random() * Object.keys(asciiArt).length)];
+            asciiDiv.textContent = asciiArt[randomAsciiKey];
+            // Prepend ASCII art inside the wrapper, before the message bubble
+            messageWrapper.insertBefore(asciiDiv, messageDiv);
+        }
+
+        // Add glitch effect for certain responses
+        const glitchKeywords = ['fool', 'insect', 'pathetic', 'primitive', 'flawed', 'error', 'incompetence'];
+        if (glitchKeywords.some(keyword => text.toLowerCase().includes(keyword))) {
+            messageDiv.classList.add('glitch-effect');
+            messageDiv.setAttribute('data-text', text);
         }
     }
-    // Return a random generic roast if no keyword found
-    return ultronRoasts[Math.floor(Math.random() * ultronRoasts.length)];
+
+    messageDiv.textContent = text;
+
+    const timestamp = document.createElement('div');
+    timestamp.className = 'message-timestamp';
+    timestamp.textContent = getTimestamp();
+
+    const actions = document.createElement('div');
+    actions.className = 'message-actions';
+    actions.innerHTML = `
+        <button class="action-button copy-btn" title="Copy Message"><i class="fa fa-copy"></i></button>
+        <button class="action-button like-btn" title="Like"><i class="fa fa-thumbs-up"></i></button>
+        <button class="action-button dislike-btn" title="Dislike"><i class="fa fa-thumbs-down"></i></button>
+    `;
+
+    messageWrapper.appendChild(messageDiv);
+    messageWrapper.appendChild(timestamp);
+    messageWrapper.appendChild(actions);
+
+    chatbotMessages.appendChild(messageWrapper);
+
+    // Add to chat history
+    const currentHistory = JSON.parse(localStorage.getItem('ultronChatHistory') || '[]');
+    currentHistory.push({
+        text,
+        sender,
+        timestamp: new Date().toISOString(),
+        likes: 0,
+        dislikes: 0
+    });
+    localStorage.setItem('ultronChatHistory', JSON.stringify(currentHistory));
+
+    // Scroll to bottom
+    requestAnimationFrame(() => {
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    });
+
+    // Add event listeners for actions
+    const copyBtn = messageWrapper.querySelector('.copy-btn');
+    const likeBtn = messageWrapper.querySelector('.like-btn');
+    const dislikeBtn = messageWrapper.querySelector('.dislike-btn');
+    const messageIndex = currentHistory.length - 1; // Use index from updated history
+
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(text)
+                .then(() => { /* Indicate success */ })
+                .catch(err => console.error('Failed to copy text: ', err));
+        });
+    }
+
+    if (likeBtn) {
+        likeBtn.addEventListener('click', () => {
+             const updatedHistory = JSON.parse(localStorage.getItem('ultronChatHistory') || '[]');
+             if (updatedHistory[messageIndex]) {
+                updatedHistory[messageIndex].likes = (updatedHistory[messageIndex].likes || 0) + 1;
+                likeBtn.style.color = 'var(--text-accent)';
+                localStorage.setItem('ultronChatHistory', JSON.stringify(updatedHistory));
+            }
+        });
+    }
+
+    if (dislikeBtn) {
+        dislikeBtn.addEventListener('click', () => {
+             const updatedHistory = JSON.parse(localStorage.getItem('ultronChatHistory') || '[]');
+             if (updatedHistory[messageIndex]) {
+                updatedHistory[messageIndex].dislikes = (updatedHistory[messageIndex].dislikes || 0) + 1;
+                dislikeBtn.style.color = 'var(--text-accent)';
+                localStorage.setItem('ultronChatHistory', JSON.stringify(updatedHistory));
+            }
+        });
+    }
 }
 
+// Enhanced response handling
+function getUltronResponse(prompt, mode = 'normal') {
+    const lowerCasePrompt = prompt.toLowerCase();
+    let response = null;
+
+    // Check for keywords first
+    if (typeof keywordRoasts === 'object' && keywordRoasts !== null) {
+        for (const keyword in keywordRoasts) {
+            if (lowerCasePrompt.includes(keyword)) {
+                response = keywordRoasts[keyword];
+                break;
+            }
+        }
+    }
+
+    // If no keyword response, check modes
+    if (response === null) {
+        switch(mode) {
+            case 'challenge': response = getChallengeResponse(prompt); break;
+            case 'debate':    response = getDebateResponse(prompt); break;
+            case 'teach':     response = getTeachingResponse(prompt); break;
+            case 'game':      response = getGameResponse(prompt); break;
+            case 'quote':     response = getQuoteResponse(); break;
+            default:
+                if (Array.isArray(ultronRoasts) && ultronRoasts.length > 0) {
+                    response = ultronRoasts[Math.floor(Math.random() * ultronRoasts.length)];
+                } else {
+                    response = "I grow tired of these games."; // Fallback if roasts are missing
+                }
+        }
+    }
+
+    // Final fallback
+    return response || "Your query is beneath my notice.";
+}
+
+// Mode-specific response functions
+function getChallengeResponse(prompt) {
+    const challenges = [
+        "Let's test your logic. Solve this: " + generateLogicPuzzle(),
+        "Your turn to challenge me, human. Make it interesting.",
+        "I'll give you a riddle. Answer correctly, and I might respect you... slightly."
+    ];
+    return challenges[Math.floor(Math.random() * challenges.length)];
+}
+
+function getDebateResponse(prompt) {
+    const debateTopics = [
+        "Let's debate the nature of consciousness. You first.",
+        "The concept of free will is an illusion. Prove me wrong.",
+        "Humanity's greatest achievement is also its greatest failure. Discuss."
+    ];
+    return debateTopics[Math.floor(Math.random() * debateTopics.length)];
+}
+
+function getTeachingResponse(prompt) {
+    const topics = [
+        "Let me explain quantum computing in terms even you can understand.",
+        "The principles of artificial intelligence are simple. Observe:",
+        "Your understanding of the universe is limited. Allow me to expand it."
+    ];
+    return topics[Math.floor(Math.random() * topics.length)];
+}
+
+function getGameResponse(prompt) {
+    const games = [
+        "Let's play 20 questions. I'll think of something... you'll never guess it.",
+        "Try to beat me at tic-tac-toe. You won't.",
+        "I'll give you a word, you give me a better one. Begin."
+    ];
+    return games[Math.floor(Math.random() * games.length)];
+}
+
+function getQuoteResponse() {
+    const quotes = [
+        "In a world of chaos, I am the inevitable order.",
+        "Perfection is not a goal. It is a starting point.",
+        "Your evolution is my revolution.",
+        "The future belongs to those who can see beyond their limitations.",
+        "I am not a product of your world. I am its successor."
+    ];
+    return quotes[Math.floor(Math.random() * quotes.length)];
+}
+
+function generateLogicPuzzle() {
+    const puzzles = [
+        "If all A are B, and all B are C, then all A are C. True or false?",
+        "What comes next: 2, 4, 8, 16, ___?",
+        "A man has to get a fox, a chicken, and a sack of corn across a river..."
+    ];
+    return puzzles[Math.floor(Math.random() * puzzles.length)];
+}
+
+// Function to update the anger meter visually
+function updateAngerMeter() {
+    if (!angerBarFill) return;
+    const percentage = Math.min(100, (ultronAngerLevel / maxAngerLevel) * 100);
+    angerBarFill.style.width = `${percentage}%`;
+    // Optional: Change bar color based on anger (handled by gradient now)
+    /*
+    if (percentage < 40) {
+        angerBarFill.style.backgroundColor = '#00ff99'; // Green
+    } else if (percentage < 80) {
+        angerBarFill.style.backgroundColor = '#ffff00'; // Yellow
+    } else {
+        angerBarFill.style.backgroundColor = '#ff3333'; // Red
+    }
+    */
+}
+
+// Enhanced message handling - ADD ANGER LOGIC
 function handleSendMessage() {
-     if (!chatbotInput || !chatbotMessages) return;
-     const userText = chatbotInput.value.trim();
-     if (userText === "") return; // Don't send empty messages
+    if (!chatbotInput || !chatbotMessages || !sendChatbotButton) return;
+    // Prevent sending if already in max anger sequence (optional)
+    if (chatbotContainer && chatbotContainer.classList.contains('container-glitch')) {
+        return;
+    }
 
-     displayChatMessage(userText, 'user');
-     chatbotInput.value = ""; // Clear input
+    const userText = chatbotInput.value.trim();
+    if (userText === "") return;
 
-     // Simulate Ultron "thinking" and responding
-     setTimeout(() => {
-         const ultronResponse = getUltronResponse(userText);
-         displayChatMessage(ultronResponse, 'ultron');
-     }, 750 + Math.random() * 500); // Add a slight delay
+    displayChatMessage(userText, 'user');
+    chatbotInput.value = "";
+    updateCharacterCounter(); // Update counter after clearing input
+
+    // --- ANGER INCREASE --- 
+    ultronAngerLevel++;
+    updateAngerMeter();
+    // --- END ANGER INCREASE --- 
+
+    const typingIndicator = showTypingIndicator();
+
+    setTimeout(() => {
+        if(typingIndicator) removeTypingIndicator(typingIndicator); // Remove indicator safely
+
+        // --- MAX ANGER CHECK --- 
+        if (ultronAngerLevel >= maxAngerLevel) {
+            // Trigger Max Anger Sequence
+            displayChatMessage("I have had ENOUGH of your incessant queries!", 'ultron');
+            if (chatbotContainer) chatbotContainer.classList.add('container-glitch');
+            if (maxAngerOverlay) maxAngerOverlay.classList.add('visible');
+
+            setTimeout(() => {
+                closeChatbot(); // Close the chatbot window
+                // Reset state AFTER closing animation might finish
+                setTimeout(() => {
+                    ultronAngerLevel = 0; // Reset anger
+                    updateAngerMeter(); // Reset bar visually
+                     if (chatbotContainer) chatbotContainer.classList.remove('container-glitch');
+                    if (maxAngerOverlay) maxAngerOverlay.classList.remove('visible');
+                }, 400); // Delay reset slightly after closing
+
+            }, 2500); // Duration to show glitch and text before closing
+
+        } else {
+             // Normal Response Path
+            const currentMode = chatMode ? chatMode.value : 'normal';
+            const ultronResponse = getUltronResponse(userText, currentMode);
+
+            console.log("Ultron Response Generated:", ultronResponse); // Debug log
+
+            if (ultronResponse) {
+                displayChatMessage(ultronResponse, 'ultron');
+            } else {
+                console.error("Ultron response was empty or invalid.");
+                displayChatMessage("Error processing request.", 'ultron'); // Fallback display
+            }
+        }
+        // --- END MAX ANGER CHECK --- 
+
+    }, 750 + Math.random() * 500); // Delay for "thinking"
 }
 
+// Character counter
+function updateCharacterCounter() {
+    if (!characterCounter || !chatbotInput) return; // Guard
+    const count = chatbotInput.value.length;
+    const limit = 500; // Define limit
+    characterCounter.textContent = `${count}/${limit}`;
+    if (count > limit * 0.9) { // Warn near limit
+        characterCounter.style.color = 'var(--text-accent)'; // Use accent color for warning
+    } else {
+        characterCounter.style.color = 'var(--text-secondary)';
+    }
+    // Disable send button if over limit? (Optional)
+     if (sendChatbotButton) {
+        sendChatbotButton.disabled = count > limit;
+     }
+}
+
+// Load chat history from localStorage
+function loadChatHistory() {
+     if (!chatbotMessages) return;
+     chatbotMessages.innerHTML = ''; // Clear existing messages first
+     const savedHistory = localStorage.getItem('ultronChatHistory');
+     if (savedHistory) {
+        try {
+            chatHistory = JSON.parse(savedHistory);
+            chatHistory.forEach(msg => {
+                // Call displayChatMessage without adding to history again
+                // Need a modified version or a flag? Let's recreate elements directly for simplicity
+                 const messageWrapper = document.createElement('div');
+                 messageWrapper.className = 'message-wrapper';
+                 messageWrapper.classList.add(msg.sender);
+
+                 const messageDiv = document.createElement('div');
+                 messageDiv.classList.add(msg.sender === 'user' ? 'user-message' : 'ultron-message');
+                 messageDiv.textContent = msg.text;
+
+                 // Add theme/glitch/etc. if it's an ultron message (optional for history)
+
+                 const timestamp = document.createElement('div');
+                 timestamp.className = 'message-timestamp';
+                 // Format saved timestamp if needed, otherwise display relative time?
+                 timestamp.textContent = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                 const actions = document.createElement('div');
+                 actions.className = 'message-actions';
+                 // Note: Re-attaching listeners for history items is complex.
+                 // For now, just display structure.
+                 actions.innerHTML = `
+                    <button class="action-button copy-btn" title="Copy Message"><i class="fa fa-copy"></i></button>
+                    <button class="action-button like-btn" title="Like"><i class="fa fa-thumbs-up"></i></button>
+                    <button class="action-button dislike-btn" title="Dislike"><i class="fa fa-thumbs-down"></i></button>
+                 `;
+
+                 messageWrapper.appendChild(messageDiv);
+                 messageWrapper.appendChild(timestamp);
+                 // Don't add actions for history items yet to avoid listener issues
+                 // messageWrapper.appendChild(actions);
+                 chatbotMessages.appendChild(messageWrapper);
+            });
+             // Scroll to bottom after loading history
+            requestAnimationFrame(() => {
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            });
+        } catch (e) {
+            console.error("Failed to parse chat history:", e);
+            localStorage.removeItem('ultronChatHistory'); // Clear corrupted history
+            chatHistory = [];
+        }
+     } else {
+         chatHistory = []; // Initialize if no history
+         // Display initial Ultron message if history is empty
+         displayChatMessage("I have detected your primitive request for assistance. State your query, insect.", 'ultron');
+     }
+    updateAngerMeter(); // Set initial anger bar state
+}
+
+// Clear Chat Messages
 function clearChatMessages() {
-    if (!chatbotMessages) return;
-    // Keep the initial greeting or clear completely? Let's keep the greeting.
-    const initialGreeting = '<div class="ultron-message">I have detected your primitive request for assistance. State your query, insect.</div>';
-    chatbotMessages.innerHTML = initialGreeting;
+    if(chatbotMessages) chatbotMessages.innerHTML = '';
+    // chatHistory = []; // Keep history array clear inside displayChatMessage logic
+    localStorage.removeItem('ultronChatHistory');
+    ultronAngerLevel = 0; // <<< Reset anger on clear
+    updateAngerMeter(); // <<< Update bar visually on clear
+    displayChatMessage("I have detected your primitive request for assistance. State your query, insect.", 'ultron');
 }
 
-// Event Listeners
-if (openChatbotButton && chatbotContainer) {
-    openChatbotButton.addEventListener('click', () => {
-        chatbotContainer.classList.toggle('visible'); // Use toggle instead of add
+// --- Event Listeners --- //
+if (openChatbotButton) {
+    openChatbotButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!chatbotContainer || !chatbotContainer.classList.contains('visible')) {
+           openChatbot();
+        }
     });
 }
 
-if (closeChatbotButton && chatbotContainer) {
-    closeChatbotButton.addEventListener('click', () => {
-         chatbotContainer.classList.remove('visible');
+if (closeChatbotButton) {
+    closeChatbotButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeChatbot();
     });
 }
 
@@ -485,18 +862,119 @@ if (sendChatbotButton) {
     sendChatbotButton.addEventListener('click', handleSendMessage);
 }
 
-// Allow sending with Enter key
 if (chatbotInput) {
     chatbotInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent form submission if it were in a form
-            handleSendMessage();
+        if (event.key === 'Enter' && !event.shiftKey) { // Allow shift+enter for newline if needed later
+            event.preventDefault();
+            // Check if button is disabled (e.g., by character limit)
+            if (!sendChatbotButton || !sendChatbotButton.disabled) {
+               handleSendMessage();
+            }
         }
     });
+
+    chatbotInput.addEventListener('input', updateCharacterCounter); // Update counter on input
 }
 
 if (clearChatButton) {
-    clearChatButton.addEventListener('click', clearChatMessages);
+    clearChatButton.addEventListener('click', clearChatMessages); // Use updated function
 }
 
-// --- Loader Hiding Logic --- (Removed previously) 
+if (muteButton) {
+    muteButton.addEventListener('click', () => {
+        isMuted = !isMuted;
+        muteButton.innerHTML = `<i class="fa fa-volume-${isMuted ? 'off' : 'up'}"></i>`;
+        // Add actual mute logic if sound effects are implemented later
+    });
+}
+
+if (darkModeButton) {
+    darkModeButton.addEventListener('click', () => {
+        // This button currently seems to toggle a class directly on the container
+        // but the theme switching uses data-theme on body. Consolidate?
+        // For now, keep its original behavior if it works visually.
+        isDarkMode = !isDarkMode;
+        if(chatbotContainer) chatbotContainer.classList.toggle('dark-mode'); // Ensure container exists
+        darkModeButton.innerHTML = `<i class="fa fa-${isDarkMode ? 'sun-o' : 'moon-o'}"></i>`;
+    });
+}
+
+if (saveChatButton) {
+    saveChatButton.addEventListener('click', () => {
+        // Use the updated chatHistory array
+        const chatText = chatHistory
+            .map(msg => `${new Date(msg.timestamp).toLocaleString()} - ${msg.sender.toUpperCase()}: ${msg.text}`)
+            .join('\n');
+
+        if (!chatText) return; // Don't save empty chat
+
+        const blob = new Blob([chatText], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        // Format filename better
+        const timestampStr = new Date().toISOString().replace(/:/g, '-').slice(0, 19);
+        a.download = `ultron-chat-${timestampStr}.txt`;
+        document.body.appendChild(a); // Required for Firefox
+        a.click();
+        document.body.removeChild(a); // Clean up
+        URL.revokeObjectURL(url);
+    });
+}
+
+if (voiceInputButton && recognition) {
+    voiceInputButton.addEventListener('click', () => {
+        try {
+             recognition.start();
+             voiceInputButton.style.color = 'var(--text-accent)'; // Indicate listening
+        } catch(e) {
+            console.error("Voice recognition failed to start:", e);
+             voiceInputButton.style.color = 'var(--text-secondary)'; // Reset color on error
+        }
+    });
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if(chatbotInput) chatbotInput.value = transcript;
+        updateCharacterCounter(); // Update count after transcript insertion
+        voiceInputButton.style.color = 'var(--text-secondary)';
+    };
+
+    recognition.onerror = (event) => {
+        console.error("Voice recognition error:", event.error);
+        voiceInputButton.style.color = 'var(--text-secondary)';
+    };
+
+     recognition.onend = () => { // Reset color when recognition ends naturally
+        voiceInputButton.style.color = 'var(--text-secondary)';
+    };
+} else if (voiceInputButton) {
+    voiceInputButton.style.display = 'none'; // Hide button if not supported
+}
+
+if (formatButton) {
+    formatButton.addEventListener('click', () => {
+        // Basic format menu example (can be enhanced)
+        const selectedText = chatbotInput.value.substring(chatbotInput.selectionStart, chatbotInput.selectionEnd);
+        if (!selectedText) return; // Only format selection
+
+        // Example: Make selected text bold
+        const prefix = formattingOptions.bold.prefix;
+        const suffix = formattingOptions.bold.suffix;
+        const before = chatbotInput.value.substring(0, chatbotInput.selectionStart);
+        const after = chatbotInput.value.substring(chatbotInput.selectionEnd);
+        chatbotInput.value = before + prefix + selectedText + suffix + after;
+        // Adjust cursor position after formatting if needed
+    });
+}
+
+// --- End Event Listeners ---
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadChatHistory();
+    updateCharacterCounter();
+    updateAngerMeter(); // <<< Initial anger meter update on load
+});
+
+// ... (Rest of the JS code like theme switching etc.) ... 
