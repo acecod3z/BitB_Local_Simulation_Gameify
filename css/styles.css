@@ -415,8 +415,15 @@ body {
 }
 
 .gameify-logo {
-    width: 176px;
+    width: 44px;
     height: 44px;
+    display: block;
+    filter: drop-shadow(0 0 5px rgba(46, 204, 113, 0.3));
+    transition: filter 0.3s ease;
+}
+
+.gameify-logo:hover {
+    filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.5));
 }
 
 /* Navigation */
