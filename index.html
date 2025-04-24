@@ -4,10 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gameify - Your Gaming Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="loader">
+    <!-- New Loader Structure -->
+    <div class="loader">
+      <div class="image">
+        <!-- Initial icon can be set here or by JS -->
+        <i class="fa fa-codepen"></i>
+      </div>
+      <span>0%</span> <!-- Start at 0% -->
+    </div>
+    <!-- End New Loader Structure -->
+  </div>
+
   <!-- Header -->
   <div class="header">
     <div class="header-content">
@@ -21,10 +35,20 @@
         <a href="#">Support</a>
       </nav>
       <div class="header-buttons">
-        <button id="themeToggle" style="background: none; border: none; color: #b8b6b4; cursor: pointer; font-size: 12px; padding: 5px;">☀️/🌙</button>
+        <button id="openChatbotButton" title="Ask Ultron" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px; padding: 5px; margin-right: 10px;"><i class="fa fa-android"></i></button>
+        <select id="themeSelector">
+          <option value="default">Default Dark</option>
+          <option value="green">Emerald Forest</option>
+          <option value="blue">Ocean Blue</option>
+          <option value="red">Sunset Blaze</option>
+          <option value="purple">Amethyst Night</option>
+          <option value="ultron">Ultron</option>
+          <option value="light">Classic Light</option>
+          <option value="mono">Monochrome</option>
+        </select>
         <a href="#" class="install-button">Install Gameify</a>
         <a href="#" class="login-button" id="loginButton">login</a>
-        <select style="background: transparent; color: #b8b6b4; border: none;">
+        <select style="background: transparent; color: var(--text-secondary); border: none;">
           <option>language</option>
         </select>
       </div>
@@ -247,13 +271,37 @@
           <a href="#">Help, I can't sign in</a>
         </div>
         <div class="qr-section">
-          <img src="assets/qr-code.png" alt="QR Code">
+          <img src="assets/qr-code.png" alt="QR Code for Mobile App">
           <p>Use the <a href="#">Gameify Mobile App</a> to sign in via QR code</p>
+          
+          <img src="assets/qrcode.png" alt="Alternative QR Code" id="new-qr-code">
+          <p>Alternative Login QR</p> 
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Ultron Chatbot Container -->
+  <div id="chatbotContainer" class="chatbot-container">
+    <div class="chatbot-header">
+      <span>Ultron</span>
+      <div>
+        <button id="clearChatButton" class="chatbot-clear-btn" title="Clear Chat"><i class="fa fa-trash-o"></i></button>
+        <button id="closeChatbotButton" class="chatbot-close-btn">&times;</button>
+      </div>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages">
+      <!-- Chat messages will appear here -->
+      <div class="ultron-message">I have detected your primitive request for assistance. State your query, insect.</div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatbotInput" placeholder="Ask your futile question...">
+      <button id="sendChatbotButton">Send</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

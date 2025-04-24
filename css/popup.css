@@ -163,6 +163,11 @@
 .qr-section {
     margin-left: 30px;
     text-align: center;
+    /* Ensure items stack vertically */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px; /* Add small gap between QR codes */
 }
 
 .qr-section img {
@@ -170,10 +175,17 @@
     border-radius: 4px;
 }
 
+/* Style for the new QR code */
+#new-qr-code {
+    margin-top: 15px; /* Add space above the new QR code */
+    /* Inherits width/border-radius from .qr-section img */
+}
+
 .qr-section p {
     font-size: 12px;
-    margin-top: 10px;
-    color: #c7d5e0;
+    margin-top: 5px; /* Reduced margin */
+    color: var(--text-secondary); /* Use variable */
+    transition: color 0.3s ease;
 }
 
 .qr-section a {
