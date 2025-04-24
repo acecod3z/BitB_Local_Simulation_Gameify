@@ -42,7 +42,7 @@ gameify/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/gameify.git
+   git clone https://github.com/acecod3z/gameify.git
    ```
 
 2. Open `index.html` in your web browser
