@@ -418,12 +418,13 @@ body {
     width: 44px;
     height: 44px;
     display: block;
-    filter: drop-shadow(0 0 5px rgba(46, 204, 113, 0.3));
-    transition: filter 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.6)) brightness(1.2);
+    mix-blend-mode: screen;
+    transition: all 0.3s ease;
 }
 
 .gameify-logo:hover {
-    filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.5));
+    filter: drop-shadow(0 0 12px rgba(46, 204, 113, 0.8)) brightness(1.4);
 }
 
 /* Navigation */
