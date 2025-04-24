@@ -5,6 +5,8 @@ const loginButton = document.getElementById("loginButton");
 const closePopupButton = document.querySelector(".popup-close-btn"); // Get close button
 
 let offsetX = 0, offsetY = 0, isDragging = false;
+let currentCarouselIndex = 0;
+let isAnimating = false;
 
 // Function to close popup
 const closePopup = () => {
@@ -87,9 +89,6 @@ if (carouselDom && carouselSliderDom && carouselTimeDom && carouselNextDom && ca
 
     let carouselTimeRunning = 1000; // Transition duration remains 1 second
     let carouselTimeAutoNext = 6000; // Changed from 10000 to 6000ms (6 seconds)
-    let isAnimating = false; 
-    let currentCarouselIndex = 0;
-    let timeAutoNext;
 
     function showCarouselSlider() {
         if (isAnimating) return;
@@ -827,25 +826,43 @@ if (chatbotInput) {
 }
 
 if (clearChatButton) {
-    clearChatButton.addEventListener('click', clearChatMessages); // Use updated function
+    clearChatButton.addEventListener('click', () => {
+        const messagesContainer = document.getElementById('chatbotMessages');
+        
+        // Add fade-out animation to all messages
+        const messages = messagesContainer.querySelectorAll('.message-wrapper');
+        messages.forEach(message => {
+            message.style.transition = 'opacity 0.3s ease-out';
+            message.style.opacity = '0';
+        });
+
+        // Clear messages after animation
+        setTimeout(() => {
+            messagesContainer.innerHTML = '';
+            // Reset anger level if it exists
+            if (window.angerLevel !== undefined) {
+                window.angerLevel = 0;
+                updateAngerBar(0);
+            }
+            // Display initial message
+            displayChatMessage("I have detected your primitive request for assistance. State your query, insect.", 'ultron');
+        }, 300);
+    });
 }
 
 if (muteButton) {
     muteButton.addEventListener('click', () => {
         isMuted = !isMuted;
-        muteButton.innerHTML = `<i class="fa fa-volume-${isMuted ? 'off' : 'up'}"></i>`;
+        muteButton.innerHTML = `<i class="fas fa-volume-${isMuted ? 'mute' : 'up'}"></i>`;
         // Add actual mute logic if sound effects are implemented later
     });
 }
 
 if (darkModeButton) {
     darkModeButton.addEventListener('click', () => {
-        // This button currently seems to toggle a class directly on the container
-        // but the theme switching uses data-theme on body. Consolidate?
-        // For now, keep its original behavior if it works visually.
         isDarkMode = !isDarkMode;
-        if(chatbotContainer) chatbotContainer.classList.toggle('dark-mode'); // Ensure container exists
-        darkModeButton.innerHTML = `<i class="fa fa-${isDarkMode ? 'sun-o' : 'moon-o'}"></i>`;
+        if(chatbotContainer) chatbotContainer.classList.toggle('dark-mode');
+        darkModeButton.innerHTML = `<i class="fas fa-${isDarkMode ? 'sun' : 'moon'}"></i>`;
     });
 }
 
@@ -995,4 +1012,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ... (Rest of the JS code like theme switching etc.) ... 
+// Update Wishlist button functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const wishlistBtn = document.querySelector('.carousel-action-buttons .wishlist-btn');
+    if (wishlistBtn) {
+        wishlistBtn.addEventListener('click', function() {
+            const items = document.querySelectorAll('.carousel .list .item');
+            console.log('Current index:', currentCarouselIndex); // Debug log
+            console.log('Number of items:', items.length); // Debug log
+            if (items && items[currentCarouselIndex]) {
+                const storeUrl = items[currentCarouselIndex].getAttribute('data-store-url');
+                console.log('Store URL:', storeUrl); // Debug log
+                if (storeUrl) {
+                    window.open(storeUrl, '_blank');
+                }
+            }
+        });
+    }
+});
+
+// ... rest of existing code ... 

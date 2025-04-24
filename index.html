@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gameify - Your Gaming Hub</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/popup.css">
 </head>
@@ -35,7 +35,7 @@
         <a href="#">Support</a>
       </nav>
       <div class="header-buttons">
-        <button id="openChatbotButton" title="Ask Ultron" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px; padding: 5px; margin-right: 10px;"><i class="fa fa-android"></i></button>
+        <button id="openChatbotButton" title="Ask Ultron" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px; padding: 5px; margin-right: 10px;"><i class="fas fa-skull"></i></button>
         <select id="themeSelector">
           <option value="default">Default Dark</option>
           <option value="green">Emerald Forest</option>
@@ -59,7 +59,7 @@
   <!-- Secondary Navigation -->
   <div class="secondary-nav">
     <div class="secondary-nav-content">
-      <a href="#">Your Store</a>
+      <a href="#">Cart</a>
       <a href="#">New & Noteworthy</a>
       <a href="#">Categories</a>
       <a href="#">Points Shop</a>
@@ -73,105 +73,129 @@
 
   <!-- Main Content Area -->
   <div class="main-content">
+    <!-- Genre Categories Menu -->
+    <div class="genre-categories">
+        <h3>Game Categories</h3>
+        <div class="genre-list">
+            <div class="genre-item active">
+                <i class="fas fa-gamepad"></i>
+                <span>All Games</span>
+                <div class="game-count">150</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-fist-raised"></i>
+                <span>Action</span>
+                <div class="game-count">45</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-dragon"></i>
+                <span>RPG</span>
+                <div class="game-count">38</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-running"></i>
+                <span>Sports</span>
+                <div class="game-count">24</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-car-side"></i>
+                <span>Racing</span>
+                <div class="game-count">18</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-puzzle-piece"></i>
+                <span>Puzzle</span>
+                <div class="game-count">15</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-ghost"></i>
+                <span>Horror</span>
+                <div class="game-count">12</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-chess"></i>
+                <span>Strategy</span>
+                <div class="game-count">28</div>
+            </div>
+            <div class="genre-item">
+                <i class="fas fa-users"></i>
+                <span>Multiplayer</span>
+                <div class="game-count">42</div>
+            </div>
+        </div>
+    </div>
+
     <!-- New Carousel Section -->
     <div class="carousel">
       <!-- list item -->
       <div class="list">
-        <div class="item">
+        <div class="item" data-store-url="https://store.steampowered.com/app/2531310/The_Last_of_Us_Part_II_Remastered/">
           <img src="assets/g1.jpg">
           <div class="content">
-            <div class="buttons">
-              <button>SEE MORE</button>
-              <button onclick="window.open('https://store.steampowered.com/app/2531310/The_Last_of_Us_Part_II_Remastered/', '_blank')">WISHLIST</button>
-            </div>
             <div class="title">Last Of Us Part II</div>
-            <div class="topic">GENRE 1</div>
+            <div class="topic">Action-Adventure, Survival Horror</div>
             <div class="des">
-              Placeholder description for Game 1. Lorem ipsum dolor sit amet...
+              Experience Ellie's brutal journey for justice in this critically acclaimed action-adventure masterpiece. Set in a post-apocalyptic United States, face intense combat, stealth gameplay, and a heart-wrenching narrative about revenge and its cost.
             </div>
           </div>
         </div>
-        <div class="item">
+        <div class="item" data-store-url="https://store.steampowered.com/app/2322010/God_of_War_Ragnark/">
           <img src="assets/g2.jpg">
           <div class="content">
-            <div class="buttons">
-              <button>SEE MORE</button>
-              <button onclick="window.open('https://store.steampowered.com/app/2322010/God_of_War_Ragnark/', '_blank')">WISHLIST</button>
-            </div>
-            <div class="title">God Of War Ragnarok</div>
-            <div class="topic">GENRE 2</div>
+            <div class="title">God Of War Ragnarök</div>
+            <div class="topic">Action RPG, Norse Mythology</div>
             <div class="des">
-              Placeholder description for Game 2. Lorem ipsum dolor sit amet...
+              Join Kratos and Atreus on their epic Norse saga as they battle gods and monsters across the Nine Realms. Face the coming of Ragnarök, forge deep bonds, and decide the fate of all those who dwell in the Nine Realms.
             </div>
           </div>
         </div>
-        <div class="item">
+        <div class="item" data-store-url="https://store.epicgames.com/en-US/p/alan-wake-2">
           <img src="assets/g3.jpg">
           <div class="content">
-            <div class="buttons">
-              <button>SEE MORE</button>
-              <button onclick="window.open('https://store.epicgames.com/en-US/p/alan-wake-2', '_blank')">WISHLIST</button>
-            </div>
             <div class="title">Alan Wake II</div>
-            <div class="topic">GENRE 3</div>
+            <div class="topic">Survival Horror, Psychological Thriller</div>
             <div class="des">
-              Placeholder description for Game 3. Lorem ipsum dolor sit amet...
+              Dive into this dark psychological thriller where reality and nightmare intertwine. As Alan Wake fights to escape his prison of darkness, FBI agent Saga Anderson investigates ritualistic murders in a small town where fiction comes to life.
             </div>
           </div>
         </div>
-        <div class="item">
+        <div class="item" data-store-url="https://store.epicgames.com/en-US/p/genshin-impact">
           <img src="assets/g4.webp">
           <div class="content">
-            <div class="buttons">
-              <button>SEE MORE</button>
-              <button onclick="window.open('https://store.epicgames.com/en-US/p/genshin-impact', '_blank')">WISHLIST</button>
-            </div>
             <div class="title">Genshin Impact</div>
-            <div class="topic">GENRE 4</div>
+            <div class="topic">Open World RPG, Action-Adventure</div>
             <div class="des">
-              Placeholder description for Game 4. Lorem ipsum dolor sit amet...
+              Embark on a journey across Teyvat, a vast world teeming with life and flowing with elemental energy. Master the seven elements, join forces with a diverse cast of characters, and unravel the mysteries of a world owned by gods and mortals.
             </div>
           </div>
         </div>
-        <div class="item">
+        <div class="item" data-store-url="https://store.epicgames.com/en-US/p/red-dead-redemption-2">
           <img src="assets/g5.jpg">
           <div class="content">
-            <div class="buttons">
-              <button>SEE MORE</button>
-              <button onclick="window.open('https://store.epicgames.com/en-US/p/red-dead-redemption-2', '_blank')">WISHLIST</button>
-            </div>
             <div class="title">Red Dead Redemption II</div>
-            <div class="topic">GENRE 5</div>
+            <div class="topic">Action-Adventure, Western Open World</div>
             <div class="des">
-              Placeholder description for Game 5. Lorem ipsum dolor sit amet...
+              Experience an epic tale of honor and loyalty in the dying days of the outlaw age. As Arthur Morgan, member of the Van der Linde gang, ride through the rugged heartland of America on a journey that will test your morals and shape the American frontier.
             </div>
           </div>
         </div>
-        <div class="item">
+        <div class="item" data-store-url="https://store.steampowered.com/app/1245620/ELDEN_RING/">
           <img src="assets/g6.webp">
           <div class="content">
-            <div class="buttons">
-              <button>SEE MORE</button>
-              <button onclick="window.open('https://store.steampowered.com/app/1245620/ELDEN_RING/', '_blank')">WISHLIST</button>
-            </div>
             <div class="title">Elden Ring</div>
-            <div class="topic">GENRE 6</div>
+            <div class="topic">Action RPG, Dark Fantasy</div>
             <div class="des">
-              Placeholder description for Game 6. Lorem ipsum dolor sit amet...
+              Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring. In the Lands Between, explore a vast world full of mystery, face incredible enemies, and uncover the secrets of a shattered realm ruled by demigods.
             </div>
           </div>
         </div>
-        <div class="item">
+        <div class="item" data-store-url="https://store.steampowered.com/app/2519060/Call_of_Duty_Modern_Warfare_III/">
           <img src="assets/g7.jpg">
           <div class="content">
-            <div class="buttons">
-              <button>SEE MORE</button>
-              <button onclick="window.open('https://store.steampowered.com/app/2519060/Call_of_Duty_Modern_Warfare_III/', '_blank')">WISHLIST</button>
-            </div>
-            <div class="title">Call Of Duty</div>
-            <div class="topic">GENRE 7</div>
+            <div class="title">Call Of Duty: Modern Warfare III</div>
+            <div class="topic">First-Person Shooter, Military Action</div>
             <div class="des">
-              Placeholder description for Game 7. Lorem ipsum dolor sit amet...
+              Return to the intense world of modern combat with cutting-edge weaponry and tactical gameplay. Experience a gripping campaign, compete in multiplayer battles, and team up in special ops missions in this latest evolution of the Call of Duty franchise.
             </div>
           </div>
         </div>
@@ -230,8 +254,14 @@
       </div>
       <!-- next prev -->
       <div class="arrows">
-        <button id="prev"><</button>
-        <button id="next">></button>
+        <div class="nav-buttons">
+            <button id="prev"><</button>
+            <button id="next">></button>
+        </div>
+        <div class="carousel-action-buttons">
+            <button>SEE MORE</button>
+            <button class="wishlist-btn">WISHLIST</button>
+        </div>
       </div>
       <!-- time running -->
       <div class="time"></div>
@@ -279,10 +309,10 @@
         <div class="chatbot-header">
             <span>Ultron</span>
             <div class="chatbot-controls">
-                <button id="muteButton" class="chatbot-control-btn" title="Mute Ultron"><i class="fa fa-volume-up"></i></button>
-                <button id="darkModeButton" class="chatbot-control-btn" title="Toggle Dark Mode"><i class="fa fa-moon-o"></i></button>
-                <button id="saveChatButton" class="chatbot-control-btn" title="Save Chat"><i class="fa fa-save"></i></button>
-                <button id="clearChatButton" class="chatbot-clear-btn" title="Clear Chat"><i class="fa fa-trash-o"></i></button>
+                <button id="muteButton" class="chatbot-control-btn" title="Mute Ultron"><i class="fas fa-volume-up"></i></button>
+                <button id="darkModeButton" class="chatbot-control-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+                <button id="saveChatButton" class="chatbot-control-btn" title="Save Chat"><i class="fas fa-save"></i></button>
+                <button id="clearChatButton" class="chatbot-clear-btn" title="Clear Chat"><i class="fas fa-trash"></i></button>
                 <button id="closeChatbotButton" class="chatbot-close-btn">&times;</button>
             </div>
         </div>
@@ -298,12 +328,12 @@
 
         <div class="chatbot-input-area">
             <div class="input-controls">
-                <button id="voiceInputButton" class="input-control-btn" title="Voice Input"><i class="fa fa-microphone"></i></button>
-                <button id="formatButton" class="input-control-btn" title="Format Text"><i class="fa fa-font"></i></button>
+                <button id="voiceInputButton" class="input-control-btn" title="Voice Input"><i class="fas fa-microphone"></i></button>
+                <button id="formatButton" class="input-control-btn" title="Format Text"><i class="fas fa-font"></i></button>
             </div>
             <input type="text" id="chatbotInput" placeholder="Ask your futile question..." aria-label="Chat input">
             <div class="character-counter">0/500</div>
-            <button id="sendChatbotButton" title="Send Message"><i class="fa fa-paper-plane"></i></button>
+            <button id="sendChatbotButton" title="Send Message"><i class="fas fa-paper-plane"></i></button>
         </div>
 
         <div class="chatbot-mode-selector">
