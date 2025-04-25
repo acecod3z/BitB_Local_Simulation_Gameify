@@ -782,12 +782,26 @@ function loadChatHistory() {
 
 // Clear Chat Messages
 function clearChatMessages() {
-    if(chatbotMessages) chatbotMessages.innerHTML = '';
-    // chatHistory = []; // Keep history array clear inside displayChatMessage logic
-    localStorage.removeItem('ultronChatHistory');
-    ultronAngerLevel = 0; // <<< Reset anger on clear
-    updateAngerMeter(); // <<< Update bar visually on clear
-    displayChatMessage("I have detected your primitive request for assistance. State your query, insect.", 'ultron');
+    if (!chatbotMessages) return;
+    
+    // Add fade-out animation to all messages
+    const messages = chatbotMessages.querySelectorAll('.message-wrapper');
+    messages.forEach(message => {
+        message.style.transition = 'opacity 0.3s ease-out';
+        message.style.opacity = '0';
+    });
+
+    // Clear messages after animation
+    setTimeout(() => {
+        chatbotMessages.innerHTML = ''; // Clear visual messages
+        localStorage.removeItem('ultronChatHistory'); // Clear localStorage
+        chatHistory = []; // Clear the in-memory chat history
+        ultronAngerLevel = 0; // Reset anger level
+        updateAngerMeter(); // Update anger meter display
+        
+        // Display initial message
+        displayChatMessage("I have detected your primitive request for assistance. State your query, insect.", 'ultron');
+    }, 300);
 }
 
 // --- Event Listeners --- //
@@ -827,26 +841,7 @@ if (chatbotInput) {
 
 if (clearChatButton) {
     clearChatButton.addEventListener('click', () => {
-        const messagesContainer = document.getElementById('chatbotMessages');
-        
-        // Add fade-out animation to all messages
-        const messages = messagesContainer.querySelectorAll('.message-wrapper');
-        messages.forEach(message => {
-            message.style.transition = 'opacity 0.3s ease-out';
-            message.style.opacity = '0';
-        });
-
-        // Clear messages after animation
-        setTimeout(() => {
-            messagesContainer.innerHTML = '';
-            // Reset anger level if it exists
-            if (window.angerLevel !== undefined) {
-                window.angerLevel = 0;
-                updateAngerBar(0);
-            }
-            // Display initial message
-            displayChatMessage("I have detected your primitive request for assistance. State your query, insect.", 'ultron');
-        }, 300);
+        clearChatMessages();
     });
 }
 
