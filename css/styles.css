@@ -459,6 +459,8 @@ body {
 .main-nav {
     display: flex;
     gap: 30px;
+    margin-right: auto;
+    margin-left: 40px;
 }
 
 .main-nav a {
@@ -478,9 +480,15 @@ body {
 /* Header buttons */
 .header-buttons {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
+    margin-left: auto;
 }
+
+#openChatbotButton {
+    margin-right: 5px !important;
+}
+
 .header-buttons select#themeSelector {
     background: var(--bg-input);
     color: var(--text-secondary);
@@ -489,7 +497,6 @@ body {
     border-radius: 2px;
     font-size: 12px;
     cursor: pointer;
-    margin-right: 10px;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 .header-buttons select#themeSelector:focus {
@@ -528,6 +535,7 @@ body {
    color: var(--text-secondary);
    border: none;
    transition: color 0.3s ease;
+   margin-right: -325px !important;
 }
 
 /* Secondary Navigation */
@@ -539,7 +547,7 @@ body {
 
 .secondary-nav-content {
     max-width: 1200px;
-    margin: 0 auto;
+    margin:  auto;
     display: flex;
     gap: 20px;
     padding: 0 20px;
@@ -560,6 +568,7 @@ body {
 .search-box {
     margin-left: auto;
     display: flex;
+    margin-right: -200px !important;
 }
 
 .search-box input {
