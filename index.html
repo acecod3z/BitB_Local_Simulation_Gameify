@@ -35,6 +35,7 @@
         <a href="#">Support</a>
       </nav>
       <div class="header-buttons">
+        <button id="openKratosButton" title="Ask Kratos" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px; padding: 5px; margin-right: 10px;"><i class="fas fa-hammer"></i></button>
         <button id="openChatbotButton" title="Ask Ultron" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px; padding: 5px; margin-right: 10px;"><i class="fas fa-skull"></i></button>
         <select id="themeSelector">
           <option value="default">Default Dark</option>
@@ -355,8 +356,37 @@
     </div>
   </div>
 
+  <div class="kratos-chatbot-container">
+    <div class="kratos-chatbot-inner-content">
+        <div class="kratos-chatbot-header">
+            <span>Kratos</span>
+            <div class="kratos-chatbot-controls">
+                <button class="kratos-chatbot-clear-btn"><i class="fas fa-trash"></i></button>
+                <button class="kratos-chatbot-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="kratos-chatbot-messages"></div>
+        <div class="kratos-anger-bar-container">
+            <div class="kratos-anger-bar-fill"></div>
+        </div>
+        <div class="kratos-max-anger-overlay">
+            <span>ENOUGH!</span>
+        </div>
+        <div class="kratos-chatbot-input-area">
+            <div class="input-controls">
+                <button class="input-control-btn"><i class="fas fa-microphone"></i></button>
+                <button class="input-control-btn"><i class="fas fa-format"></i></button>
+            </div>
+            <input type="text" id="kratosChatbotInput" placeholder="Speak to Kratos..." maxlength="500">
+            <span class="character-counter">0/500</span>
+            <button id="sendKratosButton"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/kratos-chatbot.js"></script>
 </body>
 </html>
