@@ -435,6 +435,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
+    margin-left: -15px;
 }
 
 .logo-section {
@@ -449,6 +450,7 @@ body {
     filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.6)) brightness(1.2);
     mix-blend-mode: screen;
     transition: all 0.3s ease;
+    margin-left: 50px;
 }
 
 .gameify-logo:hover {
@@ -483,6 +485,7 @@ body {
     gap: 15px;
     align-items: center;
     margin-left: auto;
+    margin-right: 50px;
 }
 
 #openChatbotButton {
@@ -551,6 +554,7 @@ body {
     display: flex;
     gap: 20px;
     padding: 0 20px;
+    margin-left: 5px;
 }
 
 .secondary-nav a {
